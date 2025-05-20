@@ -3,6 +3,7 @@ import 'package:app_postsalud/screens/home_screen.dart';
 import 'package:app_postsalud/screens/login_screen.dart';
 import 'package:app_postsalud/screens/register_screen.dart';
 import 'package:app_postsalud/screens/forgotpassword_screen.dart';
+import 'package:app_postsalud/screens/myperfil_screen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
         'home': (_) => const HomeScreen(),
         'register': (_) => const RegisterScreen(),
         'forgotpassword': (_) => const ForgotpasswordScreen(),
+        'myperfil': (_) => const MyPerfilScreen(),
       },
       initialRoute: 'login', //Llama a 'login'
     );
