@@ -1,5 +1,9 @@
+import 'dart:developer';
+
+import 'package:app_postsalud/data/dao/usuarios_dao.dart';
+import 'package:app_postsalud/data/entity/usuarios_entity.dart';
 import 'package:flutter/material.dart';
-import 'package:app_postsalud/screens/register_screen.dart';
+import 'package:app_postsalud/screens/login/register_screen.dart';
 import 'package:app_postsalud/widgets/input_decoration.dart'; // importM
 // import 'package:email_validator/email_validator.dart';
 
@@ -87,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return [
       ingresarRegistrar(context),
       const SizedBox(height: 20),
-      textFormFieldEmail(),
+      textFormFieldDni(),
       const SizedBox(height: 25),
       textFormFieldPassword(),
       const SizedBox(height: 20),
@@ -170,18 +174,17 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  TextFormField textFormFieldEmail() {
+  TextFormField textFormFieldDni() {
     return TextFormField(
       keyboardType: TextInputType.emailAddress,
       //Habilita el arroba en el teclado
       validator: (value) {
         //AGREGAR VALIDADOR DE DNI
-        return (value != null && value.length > 8) ? null : 'Dni invalido';
       },
       autocorrect: false,
       decoration: InputDecorations.inputDecoration(
-        hintText: 'Ejemplo:12345',
-        labelText: 'DNI',
+        hintText: 'Username',
+        labelText: 'Usuario',
         icono: const Icon(Icons.badge_outlined),
       ),
     );
@@ -191,9 +194,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return TextFormField(
       validator: (value) {
         //Validacion de contra
-        return (value != null && value.length >= 6)
-            ? null
-            : 'La contraseña debe ser mas de 5 caracteres';
       },
       autocorrect: false,
       decoration: InputDecorations.inputDecoration(
@@ -208,8 +208,11 @@ class _LoginScreenState extends State<LoginScreen> {
     return MaterialButton(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       disabledColor: Colors.amber,
-      onPressed: () {
-        Navigator.pushReplacementNamed(context, 'home');
+      onPressed: () async {
+        List<UsuariosEntity> usuario = await UsuariosDao.getUsuarios();
+        log(usuario.first.idUsuario.toString());
+
+        Navigator.pushReplacementNamed(context, 'homeuser');
       },
       color: Color.fromRGBO(40, 157, 137, 1),
       child: Container(

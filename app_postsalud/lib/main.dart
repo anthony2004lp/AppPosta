@@ -1,9 +1,14 @@
+import 'package:app_postsalud/screens/viewdoctor/my_perfil_doctor_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:app_postsalud/screens/home_screen.dart';
-import 'package:app_postsalud/screens/login_screen.dart';
-import 'package:app_postsalud/screens/register_screen.dart';
-import 'package:app_postsalud/screens/forgotpassword_screen.dart';
-import 'package:app_postsalud/screens/myperfil_screen.dart';
+import 'package:app_postsalud/screens/viewuser/home_user_screen.dart';
+import 'package:app_postsalud/screens/login/login_screen.dart';
+import 'package:app_postsalud/screens/login/register_screen.dart';
+import 'package:app_postsalud/screens/login/forgot_password_screen.dart';
+import 'package:app_postsalud/screens/viewuser/my_perfil_user_screen.dart';
+import 'package:app_postsalud/screens/viewdoctor/home_doctor_screen.dart';
+import 'package:app_postsalud/screens/viewdoctor/citas_doctor_screen.dart';
+import 'package:app_postsalud/screens/viewadmin/home_admin_screen.dart';
+import 'package:app_postsalud/screens/viewadmin/my_perfil_admin_screen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -19,10 +24,15 @@ class MyApp extends StatelessWidget {
       routes: {
         //Asignacion de un nombre a LoginScreen para llamarlo
         'login': (_) => const LoginScreen(),
-        'home': (_) => const HomeScreen(),
+        'homeuser': (_) => const HomeScreen(),
         'register': (_) => const RegisterScreen(),
         'forgotpassword': (_) => const ForgotpasswordScreen(),
-        'myperfil': (_) => const MyPerfilScreen(),
+        'myperfiluser': (_) => const MyPerfilUserScreen(),
+        'homedoctor': (_) => const HomeDoctorScreen(),
+        'myperfildoctor': (_) => const MyPerfilDoctorScreen(),
+        'citasdoctor': (_) => const CitasDoctorScreen(),
+        'homeadmin': (_) => const HomeAdminScreen(),
+        'myperfiladmin': (_) => const MyPerfilAdminScreen(),
       },
       initialRoute: 'login', //Llama a 'login'
     );

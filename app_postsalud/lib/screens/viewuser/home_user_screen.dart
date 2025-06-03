@@ -1,7 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:app_postsalud/screens/viewuser/widgetuser/app_bar_user.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -9,114 +8,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color.fromRGBO(40, 157, 137, 1),
-        title: Row(
-          children: [
-            SizedBox(
-              width: 20,
-              child: MaterialButton(
-                padding: EdgeInsets.zero,
-                onPressed: () {
-                  showMenu(
-                    menuPadding: EdgeInsets.symmetric(horizontal: 0),
-                    color: Color.fromRGBO(40, 157, 137, 1),
-                    context: context,
-                    position: const RelativeRect.fromLTRB(0, 110, 0, 50),
-                    items: [
-                      PopupMenuItem(
-                        value: 1,
-                        child: Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Colors.black, width: 2), // Borde negro
-                            borderRadius:
-                                BorderRadius.circular(10), // Bordes redondeados
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 15,
-                          ),
-                          margin: const EdgeInsets.only(bottom: 5),
-                          // Espacio entre los elementos
-                          child: Row(
-                            children: [
-                              Icon(Icons.house, color: Colors.black),
-                              SizedBox(width: 10),
-                              Text('Inicio'),
-                            ],
-                          ),
-                        ),
-                      ),
-                      PopupMenuItem(
-                        onTap: () {
-                          Navigator.pushReplacementNamed(context, 'myperfil');
-                        },
-                        value: 2,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black, width: 2),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 15,
-                          ),
-                          margin: const EdgeInsets.only(bottom: 5),
-                          // Espacio entre los elementos
-                          child: Row(
-                            children: [
-                              Icon(Icons.account_circle_outlined,
-                                  color: Colors.black),
-                              SizedBox(width: 10),
-                              Text('Mi perfil'),
-                            ],
-                          ),
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: 3,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black, width: 2),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 15,
-                          ),
-                          margin: const EdgeInsets.only(bottom: 5),
-                          child: Row(
-                            children: [
-                              Icon(Icons.exit_to_app_outlined,
-                                  color: Colors.black),
-                              SizedBox(width: 10),
-                              Text('Cerrar sesión'),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ).then((value) {
-                    return value != null ? null : 'Opción seleccionada: $value';
-                  });
-                },
-                child: const Icon(Icons.menu, size: 20),
-              ),
-            ),
-            const SizedBox(width: 10),
-            const Text(
-              'BIENVENIDO',
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.white,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ],
-        ),
-      ),
+      appBar: AppBarUser(userName: 'Paciente'),
       body: SafeArea(
         child: Container(
           color: Color.fromRGBO(218, 255, 249, 1),
