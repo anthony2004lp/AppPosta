@@ -1,31 +1,77 @@
 class UsuariosEntity {
-  final int idUsuario;
-  final String dni;
-  final String email;
-  final String contrasena;
-  // final String rol;
-  final bool estado;
-  final DateTime fechaRegistro;
+  int? idUsuario;
+  String nombres;
+  String apellidos;
+  String dni;
+  String telefono;
+  String email;
+  String contrasena;
+  String direccion;
+  DateTime fechaNacimiento;
+  String sexo;
+  String fotoUrl;
+  int idRol;
+  DateTime fechaRegistro;
+  String estado;
 
   UsuariosEntity({
-    required this.idUsuario,
+    this.idUsuario,
+    required this.nombres,
+    required this.apellidos,
     required this.dni,
+    required this.telefono,
     required this.email,
     required this.contrasena,
-    // required this.rol,
-    required this.estado,
+    required this.direccion,
+    required this.fechaNacimiento,
+    required this.sexo,
+    required this.fotoUrl,
+    required this.idRol,
     required this.fechaRegistro,
+    required this.estado,
   });
 
+  // Convertir desde Map (para obtener datos desde la BD)
   factory UsuariosEntity.fromMap(Map<String, dynamic> map) {
     return UsuariosEntity(
-      idUsuario: int.parse(map["id_usuario"]),
-      dni: map["dni"],
-      email: map["email"],
-      contrasena: map["contrasena"],
-      // rol: map["rol"],
-      estado: map["estado"] == 1,
-      fechaRegistro: DateTime.parse(map["fecha_registro"]),
+      idUsuario: map['id_usuario'] != null
+          ? int.tryParse(map['id_usuario'].toString())
+          : null,
+      nombres: map['nombres'] ?? '',
+      apellidos: map['apellidos'] ?? '',
+      dni: map['dni'] ?? '',
+      telefono: map['telefono'] ?? '',
+      email: map['email'] ?? '',
+      contrasena: map['contrasena'] ?? '',
+      direccion: map['direccion'] ?? '',
+      fechaNacimiento: DateTime.tryParse(map['fecha_nacimiento'].toString()) ??
+          DateTime.now(),
+      sexo: map['sexo'] ?? '',
+      fotoUrl: map['foto_url'] ?? '',
+      idRol: int.tryParse(map['id_rol'].toString()) ?? 0,
+      fechaRegistro:
+          DateTime.tryParse(map['fecha_registro'].toString()) ?? DateTime.now(),
+      estado: map['estado'] ?? 'activo',
     );
+  }
+
+  // Convertir a Map (para insertar o actualizar en la BD)
+  Map<String, dynamic> toMap() {
+    return {
+      'id_usuario': idUsuario,
+      'nombres': nombres,
+      'apellidos': apellidos,
+      'dni': dni,
+      'telefono': telefono,
+      'email': email,
+      'contrasena': contrasena,
+      'direccion': direccion,
+      'fecha_nacimiento': fechaNacimiento.toIso8601String(),
+      'sexo': sexo,
+      'foto_url': fotoUrl,
+      'id_rol': idRol,
+      'fecha_registro': fechaRegistro.toIso8601String(),
+      'estado': estado,
+    };
   }
 }

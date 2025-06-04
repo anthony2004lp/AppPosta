@@ -18,12 +18,16 @@ class CampaniaSaludEntity {
   // Convertir desde Map (para obtener datos desde la BD)
   factory CampaniaSaludEntity.fromMap(Map<String, dynamic> map) {
     return CampaniaSaludEntity(
-      idCampania: map['id_campania'],
-      titulo: map['titulo'],
-      descripcion: map['descripcion'],
-      fechaInicio: DateTime.parse(map['fecha_inicio']),
-      fechaFin: DateTime.parse(map['fecha_fin']),
-      urlInfo: map['url_info'],
+      idCampania: map['id_campania'] != null
+          ? int.tryParse(map['id_campania'].toString())
+          : null,
+      titulo: map['titulo'] ?? '',
+      descripcion: map['descripcion'] ?? '',
+      fechaInicio:
+          DateTime.tryParse(map['fecha_inicio'].toString()) ?? DateTime.now(),
+      fechaFin:
+          DateTime.tryParse(map['fecha_fin'].toString()) ?? DateTime.now(),
+      urlInfo: map['url_info'] ?? '',
     );
   }
 
