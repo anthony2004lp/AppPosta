@@ -9,6 +9,8 @@ import 'package:app_postsalud/screens/viewdoctor/home_doctor_screen.dart';
 import 'package:app_postsalud/screens/viewdoctor/citas_doctor_screen.dart';
 import 'package:app_postsalud/screens/viewadmin/home_admin_screen.dart';
 import 'package:app_postsalud/screens/viewadmin/my_perfil_admin_screen.dart';
+import 'package:app_postsalud/screens/viewuser/map_user.dart';
+import 'package:app_postsalud/screens/viewadmin/list/list_paciente_screen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -33,6 +35,8 @@ class MyApp extends StatelessWidget {
         'citasdoctor': (_) => const CitasDoctorScreen(),
         'homeadmin': (_) => const HomeAdminScreen(),
         'myperfiladmin': (_) => const MyPerfilAdminScreen(),
+        'mapuser': (_) => const MapUser(),
+        '/listPaciente': (_) => const ListPacienteScreen(),
       },
       initialRoute: 'login', //Llama a 'login'
     );

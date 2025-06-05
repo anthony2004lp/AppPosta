@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:app_postsalud/data/controllers/usuarios_controller.dart';
-import 'package:app_postsalud/data/entity/usuarios_entity.dart';
 
-Row optionsHomeUser() {
+Row optionsHomeUser(BuildContext context) {
   return Row(
     mainAxisAlignment:
         MainAxisAlignment.spaceEvenly, // Distribuye los elementos uniformemente
@@ -66,7 +64,9 @@ Row optionsHomeUser() {
             ),
             const SizedBox(height: 10),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, 'mapuser');
+              },
               style: TextButton.styleFrom(
                 padding: EdgeInsets.zero,
                 minimumSize: Size.zero,

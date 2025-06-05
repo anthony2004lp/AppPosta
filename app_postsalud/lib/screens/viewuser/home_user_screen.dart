@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.w800),
                 ),
               ),
-              optionsHomeUser(),
+              optionsHomeUser(context),
               Container(
                 margin: EdgeInsets.all(20),
                 height: 200,

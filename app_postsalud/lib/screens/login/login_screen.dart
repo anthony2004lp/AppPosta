@@ -212,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
         List<UsuariosEntity> usuario = await UsuariosDao.getUsuarios();
         log(usuario.first.idUsuario.toString());
 
-        Navigator.pushReplacementNamed(context, 'homeuser');
+        Navigator.pushReplacementNamed(context, 'homeadmin');
       },
       color: Color.fromRGBO(40, 157, 137, 1),
       child: Container(

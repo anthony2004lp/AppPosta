@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:app_postsalud/screens/viewadmin/widgetadmin/custom_button.dart';
 import 'package:app_postsalud/screens/viewadmin/widgetadmin/app_bar_admin.dart';
+import 'package:app_postsalud/screens/viewadmin/widgetadmin/options_home.dart';
 
 class HomeAdminScreen extends StatefulWidget {
   const HomeAdminScreen({super.key});
@@ -34,38 +34,7 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
                 ),
               ),
               const SizedBox(height: 40),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  CustomButton(
-                    color: Color.fromRGBO(31, 214, 255, 1),
-                    onPressed: () {},
-                    imagePath: 'assets/img/fondoLogin.png', // Imagen modificada
-                    text: 'Médicos', // Texto modificado
-                  ),
-                  SizedBox(height: 20), // Espacio entre botones
-                  CustomButton(
-                    color: Color.fromRGBO(51, 221, 8, 1),
-                    onPressed: () {},
-                    imagePath: 'assets/img/fondoLogin.png', // Imagen modificada
-                    text: 'Pacientes', // Texto modificado
-                  ),
-                  SizedBox(height: 20), // Espacio entre botones
-                  CustomButton(
-                    color: Color.fromRGBO(133, 203, 191, 1),
-                    onPressed: () {},
-                    imagePath: 'assets/img/fondoLogin.png', // Imagen modificada
-                    text: 'Citas', // Texto modificado
-                  ),
-                  SizedBox(height: 20), // Espacio entre botones
-                  CustomButton(
-                    color: Color.fromRGBO(255, 79, 79, 1),
-                    onPressed: () {},
-                    imagePath: 'assets/img/fondoLogin.png', // Imagen modificada
-                    text: 'Usuarios médicos', // Texto modificado
-                  ),
-                ],
-              )
+              OptionsHome(),
             ],
           ),
         ),

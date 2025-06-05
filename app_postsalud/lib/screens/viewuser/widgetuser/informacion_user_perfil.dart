@@ -37,6 +37,7 @@ class _InformacionUserPerfilState extends State<InformacionUserPerfil> {
                     "No hay usuarios registrados")); // Manejo si no hay datos
           }
 
+          // BORRAR es ejemplo
           // Tomamos el primer usuario como ejemplo
           UsuariosEntity usuario = snapshot.data!.first;
 
@@ -64,7 +65,7 @@ class _InformacionUserPerfilState extends State<InformacionUserPerfil> {
                     TextStyle(color: Colors.black, fontWeight: FontWeight.w800),
               ),
               Text(
-                'Edad: ${_calcularEdad(usuario.fechaNacimiento)} años', // ✅ Ahora la función está dentro de _InformacionUserPerfilState
+                'Edad: ${_calcularEdad(usuario.fechaNacimiento)} años', // Ahora la función está dentro de _InformacionUserPerfilState
                 style:
                     TextStyle(color: Colors.black, fontWeight: FontWeight.w800),
               ),
