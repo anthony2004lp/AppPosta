@@ -1,2 +1,0 @@
-C:/Users/Lenovo/Desktop/AppPosta-main (1)/AppPosta-main/app_postsalud/android/app/.cxx/Debug/2033w21g/x86/CMakeFiles/edit_cache.dir
-C:/Users/Lenovo/Desktop/AppPosta-main (1)/AppPosta-main/app_postsalud/android/app/.cxx/Debug/2033w21g/x86/CMakeFiles/rebuild_cache.dir
