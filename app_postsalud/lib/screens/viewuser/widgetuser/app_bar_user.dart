@@ -39,7 +39,11 @@ class AppBarUser extends StatelessWidget implements PreferredSizeWidget {
           text: 'Cerrar Sesión',
           onTap: () {
             // Lógica para cerrar sesión
-            Navigator.pushReplacementNamed(context, 'login');
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              'login',
+              (Route<dynamic> route) => false,
+            );
           },
         ),
       ],

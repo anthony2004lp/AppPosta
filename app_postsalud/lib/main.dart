@@ -1,3 +1,4 @@
+import 'package:app_postsalud/screens/viewadmin/list/list_paciente_historial.dart';
 import 'package:app_postsalud/screens/viewdoctor/my_perfil_doctor_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:app_postsalud/screens/viewuser/home_user_screen.dart';
@@ -36,7 +37,8 @@ class MyApp extends StatelessWidget {
         'homeadmin': (_) => const HomeAdminScreen(),
         'myperfiladmin': (_) => const MyPerfilAdminScreen(),
         'mapuser': (_) => const MapUser(),
-        '/listPaciente': (_) => const ListPacienteScreen(),
+        'listPaciente': (_) => const ListPacienteScreen(),
+        'listpacientehistorial': (_) => const ListPacienteHistorial(),
       },
       initialRoute: 'login', //Llama a 'login'
     );

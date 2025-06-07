@@ -72,13 +72,13 @@ class _OptionsHomeState extends State<OptionsHome> {
                   child: Text('Pacientes'),
                   onTap: () {
                     // Acción para Opción 1
-                    Navigator.pushNamed(context, '/listPaciente');
+                    Navigator.pushNamed(context, 'listPaciente');
                   },
                 ),
                 PopupMenuItem(
                   child: Text('Historial paciente'),
                   onTap: () {
-                    // Acción para Opción 2
+                    Navigator.popAndPushNamed(context, 'listpacientehistorial');
                   },
                 ),
               ],

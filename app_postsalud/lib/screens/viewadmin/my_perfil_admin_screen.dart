@@ -12,7 +12,7 @@ class _MyPerfilAdminScreenState extends State<MyPerfilAdminScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarAdmin(userName: 'Administrador'),
+      appBar: AppBarAdmin(title: 'Mi Perfil Admin', userName: 'Administrador'),
       body: Column(
         children: [
           Container(

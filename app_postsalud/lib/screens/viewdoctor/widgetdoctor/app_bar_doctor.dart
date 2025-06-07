@@ -31,7 +31,11 @@ class AppBarDoctor extends StatelessWidget implements PreferredSizeWidget {
           icon: Icons.logout,
           text: 'Cerrar Sesión',
           onTap: () {
-            Navigator.pushReplacementNamed(context, 'login');
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              'login',
+              (Route<dynamic> route) => false,
+            );
           },
         ),
       ],

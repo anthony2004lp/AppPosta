@@ -1,9 +1,24 @@
+import 'dart:developer';
+
+import 'package:app_postsalud/data/dao/usuarios_dao.dart';
+import 'package:app_postsalud/data/entity/usuarios_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:app_postsalud/widgets/input_decoration.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController dniController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -89,7 +104,7 @@ class RegisterScreen extends StatelessWidget {
       const SizedBox(height: 25),
       textFormFieldPassword(),
       const SizedBox(height: 25),
-      buttonRegistrarse(),
+      buttonRegistrarse(context),
       const SizedBox(
         height: 10,
       ),
@@ -109,6 +124,7 @@ class RegisterScreen extends StatelessWidget {
 
   TextFormField textFormFieldPhone() {
     return TextFormField(
+      controller: phoneController,
       keyboardType: TextInputType.name,
       autocorrect: false,
       decoration: InputDecorations.inputDecoration(
@@ -122,6 +138,11 @@ class RegisterScreen extends StatelessWidget {
     return TextFormField(
       keyboardType: TextInputType.number,
       autocorrect: false,
+      controller: dniController,
+      validator: (value) {
+        //AGREGAR VALIDADOR DE DNI
+        return (value != null && value.length > 8) ? null : 'Dni invalido';
+      },
       decoration: InputDecorations.inputDecoration(
           hintText: "84848484", labelText: "DNI", icono: Icon(Icons.badge)),
     );
@@ -129,6 +150,7 @@ class RegisterScreen extends StatelessWidget {
 
   TextFormField textFormFieldLastName() {
     return TextFormField(
+      controller: lastNameController,
       keyboardType: TextInputType.name,
       autocorrect: false,
       decoration: InputDecorations.inputDecoration(
@@ -140,36 +162,26 @@ class RegisterScreen extends StatelessWidget {
 
   TextFormField textFormFieldName() {
     return TextFormField(
+      controller: nameController,
       keyboardType: TextInputType.name,
-      autocorrect: false,
       decoration: InputDecorations.inputDecoration(
-          hintText: "Nombre", labelText: "Nombre", icono: Icon(Icons.person)),
-    );
-  }
-
-  TextButton buttonRegistrarse() {
-    return TextButton(
-      style: ButtonStyle(
-          backgroundColor:
-              WidgetStatePropertyAll(Color.fromRGBO(40, 157, 137, 1))),
-      onPressed: () {},
-      child: Text(
-        'Registrarse',
-        style: TextStyle(
-          color: Colors.black54,
-          fontSize: 15,
-        ),
+        hintText: "Nombre",
+        labelText: "Nombre",
+        icono: Icon(Icons.person),
       ),
     );
   }
 
   TextFormField textFormFieldEmail() {
     return TextFormField(
+      controller: emailController,
       keyboardType: TextInputType.emailAddress,
       //Habilita el arroba en el teclado
       validator: (value) {
-        //AGREGAR VALIDADOR DE DNI
-        return (value != null && value.length > 8) ? null : 'Dni invalido';
+        //Validacion de email
+        return (value != null && value.contains('@'))
+            ? null
+            : 'El email debe contener un @';
       },
       autocorrect: false,
       decoration: InputDecorations.inputDecoration(
@@ -182,6 +194,7 @@ class RegisterScreen extends StatelessWidget {
 
   TextFormField textFormFieldPassword() {
     return TextFormField(
+      controller: passwordController,
       validator: (value) {
         //Validacion de contra
         return (value != null && value.length >= 6)
@@ -193,6 +206,45 @@ class RegisterScreen extends StatelessWidget {
         hintText: '******',
         labelText: 'Contraseña',
         icono: const Icon(Icons.password),
+      ),
+    );
+  }
+
+  TextButton buttonRegistrarse(BuildContext context) {
+    return TextButton(
+      style: ButtonStyle(
+        backgroundColor:
+            WidgetStatePropertyAll(Color.fromRGBO(40, 157, 137, 1)),
+      ),
+      onPressed: () async {
+        UsuariosEntity nuevoUsuario = UsuariosEntity(
+          nombres: nameController.text.trim(),
+          apellidos: lastNameController.text.trim(),
+          dni: dniController.text.trim(),
+          telefono: phoneController.text.trim(),
+          email: emailController.text.trim(),
+          contrasena: passwordController.text.trim(),
+          direccion: "", // Puedes agregar un campo de dirección si lo necesitas
+          fechaNacimiento: DateTime.now(), // Ajusta según tu lógica
+          sexo: "Otro", // Puedes agregar un campo de selección
+          fotoUrl: "",
+          idRol: 1, // Define el rol según tu lógica
+          estado: "activo", // Estado activo
+          fechaRegistro: DateTime.now(), // Estado activo
+        );
+
+        await UsuariosDao.insertUsuario(nuevoUsuario);
+        log("Usuario registrado correctamente: ${nuevoUsuario.fechaRegistro}");
+
+        // Redirigir al usuario después del registro
+        Navigator.pushReplacementNamed(context, 'login');
+      },
+      child: Text(
+        'Registrarse',
+        style: TextStyle(
+          color: Colors.black54,
+          fontSize: 15,
+        ),
       ),
     );
   }

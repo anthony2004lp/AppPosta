@@ -1,10 +1,8 @@
 import 'dart:developer';
-
 import 'package:app_postsalud/data/dao/usuarios_dao.dart';
 import 'package:app_postsalud/data/entity/usuarios_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:app_postsalud/screens/login/register_screen.dart';
-import 'package:app_postsalud/widgets/input_decoration.dart'; // importM
 // import 'package:email_validator/email_validator.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -15,6 +13,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController dniController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   String selectedButton = '';
   @override
   Widget build(BuildContext context) {
@@ -95,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
       const SizedBox(height: 25),
       textFormFieldPassword(),
       const SizedBox(height: 20),
-      buttonIngresar(context),
+      buttonIngresar(context, dniController, passwordController),
       const SizedBox(height: 25),
       forgotPassword()
     ];
@@ -176,43 +176,71 @@ class _LoginScreenState extends State<LoginScreen> {
 
   TextFormField textFormFieldDni() {
     return TextFormField(
-      keyboardType: TextInputType.emailAddress,
-      //Habilita el arroba en el teclado
-      validator: (value) {
-        //AGREGAR VALIDADOR DE DNI
-      },
-      autocorrect: false,
-      decoration: InputDecorations.inputDecoration(
-        hintText: 'Username',
+      controller: dniController,
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(
+        hintText: 'DNI',
         labelText: 'Usuario',
-        icono: const Icon(Icons.badge_outlined),
+        icon: const Icon(Icons.badge_outlined),
       ),
     );
   }
 
   TextFormField textFormFieldPassword() {
     return TextFormField(
-      validator: (value) {
-        //Validacion de contra
-      },
-      autocorrect: false,
-      decoration: InputDecorations.inputDecoration(
+      controller: passwordController,
+      obscureText: true,
+      decoration: InputDecoration(
         hintText: '******',
         labelText: 'Contraseña',
-        icono: const Icon(Icons.lock_open),
+        icon: const Icon(Icons.lock_open),
       ),
     );
   }
 
-  MaterialButton buttonIngresar(BuildContext context) {
+  MaterialButton buttonIngresar(
+      BuildContext context,
+      TextEditingController dniController,
+      TextEditingController passwordController) {
     return MaterialButton(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       disabledColor: Colors.amber,
       onPressed: () async {
-        List<UsuariosEntity> usuario = await UsuariosDao.getUsuarios();
-        log(usuario.first.idUsuario.toString());
+        String dni = dniController.text.trim();
+        String contrasena = passwordController.text.trim();
 
-        Navigator.pushReplacementNamed(context, 'homeadmin');
+        log("DNI capturado antes de consulta: '$dni'");
+        log("Contraseña capturada antes de consulta: '$contrasena'");
+
+        if (dni.isEmpty || contrasena.isEmpty) {
+          log("Error: Alguno de los campos está vacío.");
+          return;
+        }
+
+        UsuariosEntity? usuarios =
+            await UsuariosDao.getUsuariosByCredentials(dni, contrasena);
+
+        if (usuarios != null) {
+          // Tomamos el primer usuario encontrado
+          log("Usuario encontrado: ${usuarios.nombres}");
+          int idRol = usuarios.idRol;
+
+          switch (idRol) {
+            case 1:
+              Navigator.pushReplacementNamed(context, 'homeuser');
+              break;
+            case 2:
+              Navigator.pushReplacementNamed(context, 'homedoctor');
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, 'homeadmin');
+              break;
+            default:
+              log("Rol no reconocido: $idRol");
+          }
+        } else {
+          log("Credenciales incorrectas");
+        }
       },
       color: Color.fromRGBO(40, 157, 137, 1),
       child: Container(

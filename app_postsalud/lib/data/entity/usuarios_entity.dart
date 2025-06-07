@@ -7,11 +7,11 @@ class UsuariosEntity {
   String email;
   String contrasena;
   String direccion;
-  DateTime fechaNacimiento;
+  DateTime? fechaNacimiento;
   String sexo;
   String fotoUrl;
   int idRol;
-  DateTime fechaRegistro;
+  DateTime? fechaRegistro;
   String estado;
 
   UsuariosEntity({
@@ -23,11 +23,11 @@ class UsuariosEntity {
     required this.email,
     required this.contrasena,
     required this.direccion,
-    required this.fechaNacimiento,
+    this.fechaNacimiento,
     required this.sexo,
     required this.fotoUrl,
     required this.idRol,
-    required this.fechaRegistro,
+    this.fechaRegistro,
     required this.estado,
   });
 
@@ -44,13 +44,15 @@ class UsuariosEntity {
       email: map['email'] ?? '',
       contrasena: map['contrasena'] ?? '',
       direccion: map['direccion'] ?? '',
-      fechaNacimiento: DateTime.tryParse(map['fecha_nacimiento'].toString()) ??
-          DateTime.now(),
       sexo: map['sexo'] ?? '',
       fotoUrl: map['foto_url'] ?? '',
       idRol: int.tryParse(map['id_rol'].toString()) ?? 0,
-      fechaRegistro:
-          DateTime.tryParse(map['fecha_registro'].toString()) ?? DateTime.now(),
+      fechaNacimiento: map['fecha_nacimiento'] != null
+          ? DateTime.tryParse(map['fecha_nacimiento'].toString())
+          : null,
+      fechaRegistro: map['fecha_registro'] != null
+          ? DateTime.tryParse(map['fecha_registro'].toString())
+          : null,
       estado: map['estado'] ?? 'activo',
     );
   }
@@ -66,12 +68,16 @@ class UsuariosEntity {
       'email': email,
       'contrasena': contrasena,
       'direccion': direccion,
-      'fecha_nacimiento': fechaNacimiento.toIso8601String(),
       'sexo': sexo,
       'foto_url': fotoUrl,
       'id_rol': idRol,
-      'fecha_registro': fechaRegistro.toIso8601String(),
+      'fecha_nacimiento':
+          fechaNacimiento?.toLocal().toIso8601String().split('T')[0],
+      'fecha_registro':
+          fechaRegistro?.toLocal().toIso8601String().split('T')[0],
       'estado': estado,
     };
   }
+
+  // Future<UsuariosEntity> fromMap(Map<String, String?> assoc) {}
 }

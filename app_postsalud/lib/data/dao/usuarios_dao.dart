@@ -15,6 +15,23 @@ class UsuariosDao {
     return usuarios;
   }
 
+  static Future<UsuariosEntity?> getUsuariosByCredentials(
+      String dni, String contrasena) async {
+    var conn = await DatabaseService.connect();
+
+    var result = await conn.execute(
+      "SELECT * FROM usuarios WHERE dni = :dni AND contrasena = :contrasena;",
+      {"dni": dni, "contrasena": contrasena},
+    );
+    // UsuariosEntity usuario;
+    await conn.close();
+    if (result.isNotEmpty) {
+      return UsuariosEntity.fromMap(result.rows.first.assoc());
+    } else {
+      return null;
+    }
+  }
+
   // Insertar un usuario nuevo
   static Future<void> insertUsuario(UsuariosEntity usuario) async {
     var conn = await DatabaseService.connect();
@@ -29,7 +46,7 @@ class UsuariosDao {
         usuario.email,
         usuario.contrasena,
         usuario.direccion,
-        usuario.fechaNacimiento.toIso8601String(),
+        usuario.fechaNacimiento?.toIso8601String(),
         usuario.sexo,
         usuario.fotoUrl,
         usuario.idRol,
@@ -54,7 +71,7 @@ class UsuariosDao {
         usuario.email,
         usuario.contrasena,
         usuario.direccion,
-        usuario.fechaNacimiento.toIso8601String(),
+        usuario.fechaNacimiento?.toIso8601String(),
         usuario.sexo,
         usuario.fotoUrl,
         usuario.idRol,

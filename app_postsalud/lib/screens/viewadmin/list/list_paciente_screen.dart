@@ -159,7 +159,7 @@ class _ListPacienteScreenState extends State<ListPacienteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarAdmin(userName: 'Administrador'),
+      appBar: AppBarAdmin(title: 'Lista Pacientes', userName: 'Administrador'),
       body: SafeArea(
         child: Column(
           children: [
@@ -199,7 +199,7 @@ class _ListPacienteScreenState extends State<ListPacienteScreen> {
                             Text('Email: ${usuarios[index].email}'),
                             Text('Dirección: ${usuarios[index].direccion}'),
                             Text(
-                                'Fecha de Nacimiento: ${usuarios[index].fechaNacimiento.toLocal()}'),
+                                'Fecha de Nacimiento: ${usuarios[index].fechaNacimiento?.toLocal()}'),
                             Text('Sexo: ${usuarios[index].sexo}'),
                             // Text('Foto URL: ${usuarios[index].fotoUrl}'),
                             Row(
@@ -207,7 +207,101 @@ class _ListPacienteScreenState extends State<ListPacienteScreen> {
                               children: [
                                 ElevatedButton.icon(
                                   onPressed: () {
-                                    // Implementar lógica de edición
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Editar Paciente'),
+                                        content: SingleChildScrollView(
+                                          child: Form(
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                _buildTextField(
+                                                  TextEditingController(
+                                                      text: usuarios[index]
+                                                          .nombres),
+                                                  'Nombres',
+                                                ),
+                                                _buildTextField(
+                                                  TextEditingController(
+                                                      text: usuarios[index]
+                                                          .apellidos),
+                                                  'Apellidos',
+                                                ),
+                                                _buildTextField(
+                                                  TextEditingController(
+                                                      text:
+                                                          usuarios[index].dni),
+                                                  'DNI',
+                                                ),
+                                                _buildTextField(
+                                                  TextEditingController(
+                                                      text: usuarios[index]
+                                                          .telefono),
+                                                  'Teléfono',
+                                                ),
+                                                _buildTextField(
+                                                  TextEditingController(
+                                                      text: usuarios[index]
+                                                          .email),
+                                                  'Email',
+                                                ),
+                                                _buildTextField(
+                                                  TextEditingController(
+                                                      text: usuarios[index]
+                                                          .direccion),
+                                                  'Dirección',
+                                                ),
+                                                _buildTextField(
+                                                  TextEditingController(
+                                                      text: usuarios[index]
+                                                              .fechaNacimiento
+                                                              ?.toLocal()
+                                                              .toString() ??
+                                                          ''),
+                                                  'Fecha de Nacimiento',
+                                                  keyboardType:
+                                                      TextInputType.datetime,
+                                                ),
+                                                DropdownButtonFormField(
+                                                  value: usuarios[index].sexo ??
+                                                      '',
+                                                  items: [
+                                                    'Masculino',
+                                                    'Femenino'
+                                                  ]
+                                                      .map((sexo) =>
+                                                          DropdownMenuItem(
+                                                              value: sexo,
+                                                              child:
+                                                                  Text(sexo)))
+                                                      .toList(),
+                                                  onChanged: (value) {
+                                                    // Actualizar el sexo
+                                                  },
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    labelText: 'Sexo',
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: const Text('Cancelar'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: const Text('Guardar'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
                                   },
                                   icon: const Icon(Icons.edit),
                                   label: const Text('Editar'),

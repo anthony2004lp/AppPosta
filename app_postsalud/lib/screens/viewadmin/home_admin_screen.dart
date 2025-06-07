@@ -13,7 +13,7 @@ class _HomeAdminScreenState extends State<HomeAdminScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarAdmin(userName: 'Administrador'),
+      appBar: AppBarAdmin(title: 'Home Admin', userName: 'Administrador'),
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.all(10),

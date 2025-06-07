@@ -65,7 +65,9 @@ class _InformacionUserPerfilState extends State<InformacionUserPerfil> {
                     TextStyle(color: Colors.black, fontWeight: FontWeight.w800),
               ),
               Text(
-                'Edad: ${_calcularEdad(usuario.fechaNacimiento)} años', // Ahora la función está dentro de _InformacionUserPerfilState
+                usuario.fechaNacimiento != null
+                    ? 'Edad: ${_calcularEdad(usuario.fechaNacimiento!)} años'
+                    : 'Edad: No disponible',
                 style:
                     TextStyle(color: Colors.black, fontWeight: FontWeight.w800),
               ),
