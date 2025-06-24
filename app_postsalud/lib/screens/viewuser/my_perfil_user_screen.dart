@@ -1,3 +1,5 @@
+import 'package:app_postsalud/data/controllers/usuarios_controller.dart';
+import 'package:app_postsalud/data/entity/usuarios_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:app_postsalud/screens/viewuser/widgetuser/app_bar_user.dart';
 import 'package:app_postsalud/screens/viewuser/widgetuser/informacion_user_perfil.dart';
@@ -10,10 +12,30 @@ class MyPerfilUserScreen extends StatefulWidget {
 }
 
 class _MyPerfilUserScreenState extends State<MyPerfilUserScreen> {
+  String userName = 'Administrador'; // Valor por defecto
+  UsuariosEntity? usuarioPaciente;
+
+  void initState() {
+    super.initState();
+    cargarUsuarioPaciente(); // Llamar la función al iniciar
+  }
+
+  void cargarUsuarioPaciente() async {
+    List<UsuariosEntity> usuarios =
+        await UsuariosController.obtenerUsuariosPaciente();
+    if (usuarios.isNotEmpty) {
+      setState(() {
+        usuarioPaciente =
+            usuarios.first; // Tomar el primer usuario con idRol == 1
+        userName = usuarioPaciente!.nombres; // Actualizar userName
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarUser(userName: 'paciente'),
+      appBar: AppBarUser(userName: userName, title: 'Mi Perfil'),
       body: Column(
         children: [
           Container(

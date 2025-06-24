@@ -1,18 +1,45 @@
+import 'package:app_postsalud/data/controllers/usuarios_controller.dart';
+import 'package:app_postsalud/data/entity/usuarios_entity.dart';
 import 'package:app_postsalud/widgets/reusable_perfil.dart';
 import 'package:app_postsalud/widgets/reusable_perfil_item.dart';
 import 'package:flutter/material.dart';
 import 'package:app_postsalud/widgets/reusable_app_bar.dart';
 import 'package:app_postsalud/widgets/reusable_popup_menu_item_app_bar.dart';
 
-class MyPerfilDoctorScreen extends StatelessWidget {
+class MyPerfilDoctorScreen extends StatefulWidget {
   const MyPerfilDoctorScreen({super.key});
+
+  @override
+  State<MyPerfilDoctorScreen> createState() => _MyPerfilDoctorScreenState();
+}
+
+class _MyPerfilDoctorScreenState extends State<MyPerfilDoctorScreen> {
+  String userName = 'Medico'; // Valor por defecto
+  UsuariosEntity? usuarioPaciente;
+
+  @override
+  void initState() {
+    super.initState();
+    cargarUsuarioAdmin(); // Llamar la función al iniciar
+  }
+
+  void cargarUsuarioAdmin() async {
+    List<UsuariosEntity> usuarios =
+        await UsuariosController.obtenerUsuariosAdmin();
+    if (usuarios.isNotEmpty) {
+      setState(() {
+        usuarioPaciente = usuarios.first;
+        userName = usuarioPaciente!.nombres; // Actualizar userName
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ReusableAppBar(
         title: 'Mi Perfil',
-        userName: 'Doctor',
+        userName: userName,
         popupMenuItems: [
           ReusablePopupMenuItem(
             icon: Icons.person,

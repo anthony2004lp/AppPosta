@@ -1,3 +1,5 @@
+import 'package:app_postsalud/data/controllers/usuarios_controller.dart';
+import 'package:app_postsalud/data/entity/usuarios_entity.dart';
 import 'package:app_postsalud/screens/viewadmin/widgetadmin/app_bar_admin.dart';
 import 'package:flutter/material.dart';
 import 'package:app_postsalud/screens/login/login_screen.dart';
@@ -10,12 +12,32 @@ class ListPacienteHistorial extends StatefulWidget {
 }
 
 class _ListPacienteHistorialState extends State<ListPacienteHistorial> {
+  String userName = 'Administrador'; // Valor por defecto
+  UsuariosEntity? usuarioAdmin;
+
+  @override
+  void initState() {
+    super.initState();
+    cargarUsuarioAdmin(); // Llamar la función al iniciar
+  }
+
+  void cargarUsuarioAdmin() async {
+    List<UsuariosEntity> usuarios =
+        await UsuariosController.obtenerUsuariosAdmin();
+    if (usuarios.isNotEmpty) {
+      setState(() {
+        usuarioAdmin = usuarios.first; // Tomar el primer usuario con idRol == 1
+        userName = usuarioAdmin!.nombres; // Actualizar userName
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarAdmin(
         title: 'Historial P.',
-        userName: 'Administrador',
+        userName: userName,
       ),
       body: SafeArea(
           child: Padding(

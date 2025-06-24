@@ -47,4 +47,82 @@ class UsuariosController {
       );
     }
   }
+
+  static Future<List<UsuariosEntity>> obtenerUsuariosAdmin() async {
+    List<UsuariosEntity> usuarios = await UsuariosDao.getUsuarios();
+    return usuarios.where((user) => user.idRol == 3).toList();
+  }
+
+  static Future<String?> obtenerNombreAdmin() async {
+    List<UsuariosEntity> usuarios = await UsuariosDao.getUsuarios();
+    UsuariosEntity? admin = usuarios.firstWhere(
+      (user) => user.idRol == 3,
+      orElse: () => UsuariosEntity(
+        nombres: "Administrador", // Valor por defecto si no se encuentra
+        apellidos: "",
+        dni: "",
+        telefono: "",
+        email: "",
+        contrasena: "",
+        direccion: "",
+        sexo: "",
+        fotoUrl: "",
+        idRol: 1,
+        estado: "activo",
+      ),
+    );
+    return admin.nombres;
+  }
+
+  static Future<List<UsuariosEntity>> obtenerUsuariosMedico() async {
+    List<UsuariosEntity> usuarios = await UsuariosDao.getUsuarios();
+    return usuarios.where((user) => user.idRol == 2).toList();
+  }
+
+  static Future<String?> obtenerNombreMedico() async {
+    List<UsuariosEntity> usuarios = await UsuariosDao.getUsuarios();
+    UsuariosEntity? medico = usuarios.firstWhere(
+      (user) => user.idRol == 3,
+      orElse: () => UsuariosEntity(
+        nombres: "Administrador", // Valor por defecto si no se encuentra
+        apellidos: "",
+        dni: "",
+        telefono: "",
+        email: "",
+        contrasena: "",
+        direccion: "",
+        sexo: "",
+        fotoUrl: "",
+        idRol: 1,
+        estado: "activo",
+      ),
+    );
+    return medico.nombres;
+  }
+
+  static Future<List<UsuariosEntity>> obtenerUsuariosPaciente() async {
+    List<UsuariosEntity> usuarios = await UsuariosDao.getUsuarios();
+    return usuarios.where((user) => user.idRol == 1).toList();
+  }
+
+  static Future<String?> obtenerNombrePaciente() async {
+    List<UsuariosEntity> usuarios = await UsuariosDao.getUsuarios();
+    UsuariosEntity? paciente = usuarios.firstWhere(
+      (user) => user.idRol == 1,
+      orElse: () => UsuariosEntity(
+        nombres: "Administrador", // Valor por defecto si no se encuentra
+        apellidos: "",
+        dni: "",
+        telefono: "",
+        email: "",
+        contrasena: "",
+        direccion: "",
+        sexo: "",
+        fotoUrl: "",
+        idRol: 1,
+        estado: "activo",
+      ),
+    );
+    return paciente.nombres;
+  }
 }

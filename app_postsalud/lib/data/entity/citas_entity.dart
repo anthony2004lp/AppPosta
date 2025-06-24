@@ -1,16 +1,18 @@
+import 'package:flutter/material.dart';
+
 class CitasEntity {
-  final int idcita;
-  final int idusuario;
-  final int idmedico;
-  final int idespecialidad;
-  final DateTime fecha;
-  final DateTime hora;
-  final String tipocita;
-  final String estado;
-  final String motivo;
-  final String observaciones;
-  final DateTime fechareprogramada;
-  final DateTime horareprogramada;
+  int idcita;
+  int idusuario;
+  int idmedico;
+  int idespecialidad;
+  DateTime fecha;
+  TimeOfDay hora;
+  String tipocita;
+  String estado;
+  String motivo;
+  String observaciones;
+  DateTime fechareprogramada;
+  TimeOfDay horareprogramada;
 
   CitasEntity({
     required this.idcita,
@@ -30,21 +32,39 @@ class CitasEntity {
   factory CitasEntity.fromMap(Map<String, dynamic> map) {
     return CitasEntity(
       idcita: map['id_cita'] != null ? int.parse(map['id_cita'].toString()) : 0,
-      idusuario:
-          map['idusuario'] != null ? int.parse(map['idusuario'].toString()) : 0,
-      idmedico:
-          map['idmedico'] != null ? int.parse(map['idmedico'].toString()) : 0,
-      idespecialidad: map['idespecialidad'] != null
-          ? int.parse(map['idespecialidad'].toString())
+      idusuario: map['id_usuario'] != null
+          ? int.parse(map['id_usuario'].toString())
           : 0,
-      fecha: DateTime.parse(map['fecha']),
-      hora: DateTime.parse(map['hora']),
-      tipocita: map['tipo'] ?? '',
-      estado: map['estado'] ?? 'pendiente',
+      idmedico:
+          map['id_medico'] != null ? int.parse(map['id_medico'].toString()) : 0,
+      idespecialidad: map['id_especialidad'] != null
+          ? int.parse(map['id_especialidad'].toString())
+          : 0,
+      fecha: DateTime.parse(map['fecha'])
+          .toLocal()
+          .copyWith(hour: 0, minute: 0, second: 0),
+      hora: (map['hora'] != null && map['hora'].contains(":"))
+          ? TimeOfDay(
+              hour: int.parse(map['hora'].split(":")[0]),
+              minute: int.parse(map['hora'].split(":")[1]),
+            )
+          : const TimeOfDay(hour: 0, minute: 0),
+      tipocita: map['tipo_cita'] ?? '',
+      estado: map['estado'] ?? '',
       motivo: map['motivo'] ?? '',
       observaciones: map['observaciones'] ?? '',
-      fechareprogramada: DateTime.parse(map['fechareprogramada']),
-      horareprogramada: DateTime.parse(map['horareprogramada']),
+      fechareprogramada: map['fecha_programada'] != null
+          ? DateTime.parse(map['fecha_programada'])
+              .toLocal()
+              .copyWith(hour: 0, minute: 0, second: 0)
+          : DateTime.now(),
+      horareprogramada: map['hora_reprogramada'] != null &&
+              map['hora_reprogramada'].contains(":")
+          ? TimeOfDay(
+              hour: int.parse(map['hora_reprogramada'].split(":")[0]),
+              minute: int.parse(map['hora_reprogramada'].split(":")[1]),
+            )
+          : const TimeOfDay(hour: 0, minute: 0),
     );
   }
 
@@ -53,20 +73,16 @@ class CitasEntity {
       'id_cita': idcita,
       'id_usuario': idusuario,
       'id_medico': idmedico,
-      'id_posta': idespecialidad,
-      'id_especialidad': fecha.toIso8601String(),
-      'fecha': hora.toIso8601String(),
+      'id_especialidad': idespecialidad,
+      'fecha': fecha.toIso8601String(),
+      'hora':
+          '${hora.hour.toString().padLeft(2, '0')}:${hora.minute.toString().padLeft(2, '0')}',
       'tipo_cita': tipocita,
       'estado': estado,
-      'motivo': motivo,
+      'hora_reprogramada':
+          '${horareprogramada.hour.toString().padLeft(2, '0')}:${horareprogramada.minute.toString().padLeft(2, '0')}',
       'observaciones': observaciones,
       'fecha_reprogramada': fechareprogramada.toIso8601String(),
-      'hora_reprogramada': horareprogramada.toIso8601String(),
     };
-  }
-
-  @override
-  String toString() {
-    return 'CitasEntity{idcita: $idcita, idusuario: $idusuario, idmedico: $idmedico, idespecialidad: $idespecialidad, fecha: $fecha, hora: $hora, estado: $estado, motivo: $motivo, observaciones: $observaciones, fechareprogramada: $fechareprogramada, horareprogramada: $horareprogramada}';
   }
 }

@@ -13,11 +13,25 @@ class ListPacienteScreen extends StatefulWidget {
 
 class _ListPacienteScreenState extends State<ListPacienteScreen> {
   late Future<List<UsuariosEntity>> _usuariosFuture;
+  String userName = 'Administrador'; // Valor por defecto
+  UsuariosEntity? usuarioAdmin;
 
   @override
   void initState() {
     super.initState();
+    cargarUsuarioAdmin(); // Llamar la función al iniciar
     _usuariosFuture = UsuariosController.obtenerUsuarios(); // Usar controlador
+  }
+
+  void cargarUsuarioAdmin() async {
+    List<UsuariosEntity> usuarios =
+        await UsuariosController.obtenerUsuariosAdmin();
+    if (usuarios.isNotEmpty) {
+      setState(() {
+        usuarioAdmin = usuarios.first; // Tomar el primer usuario con idRol == 1
+        userName = usuarioAdmin!.nombres; // Actualizar userName
+      });
+    }
   }
 
   // Método para mostrar el formulario de registro de pacientes
@@ -159,7 +173,7 @@ class _ListPacienteScreenState extends State<ListPacienteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarAdmin(title: 'Lista Pacientes', userName: 'Administrador'),
+      appBar: AppBarAdmin(title: 'Lista Pacientes', userName: userName),
       body: SafeArea(
         child: Column(
           children: [

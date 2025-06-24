@@ -18,6 +18,7 @@ class ReusableAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: false,
       backgroundColor: Color.fromRGBO(40, 157, 137, 1),
       title: Row(
         children: [
@@ -53,7 +54,7 @@ class ReusableAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Row(
                   children: [
                     const Text(
-                      'Hola,',
+                      'Hola, ',
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         fontSize: 20,

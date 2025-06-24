@@ -1,5 +1,8 @@
-import 'package:app_postsalud/screens/viewadmin/list/list_paciente_historial.dart';
+import 'package:app_postsalud/screens/viewadmin/list/list_citas_screen.dart';
+import 'package:app_postsalud/screens/viewadmin/list/list_medicos_screen.dart';
+import 'package:app_postsalud/screens/viewadmin/list/list_paciente_historial_screen.dart';
 import 'package:app_postsalud/screens/viewdoctor/my_perfil_doctor_screen.dart';
+import 'package:app_postsalud/screens/viewuser/reserva_cita_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:app_postsalud/screens/viewuser/home_user_screen.dart';
 import 'package:app_postsalud/screens/login/login_screen.dart';
@@ -12,6 +15,7 @@ import 'package:app_postsalud/screens/viewadmin/home_admin_screen.dart';
 import 'package:app_postsalud/screens/viewadmin/my_perfil_admin_screen.dart';
 import 'package:app_postsalud/screens/viewuser/map_user.dart';
 import 'package:app_postsalud/screens/viewadmin/list/list_paciente_screen.dart';
+import 'package:app_postsalud/screens/viewuser/map_user.dart';
 
 void main() => runApp(const MyApp());
 
@@ -39,6 +43,10 @@ class MyApp extends StatelessWidget {
         'mapuser': (_) => const MapUser(),
         'listPaciente': (_) => const ListPacienteScreen(),
         'listpacientehistorial': (_) => const ListPacienteHistorial(),
+        'listadoctor': (_) => const ListMedicosScreen(),
+        'listacitas': (_) => const ListCitasScreen(),
+        'mapuser': (_) => const MapUser(),
+        'reservacita': (_) => const ReservaCitaScreen(),
       },
       initialRoute: 'login', //Llama a 'login'
     );

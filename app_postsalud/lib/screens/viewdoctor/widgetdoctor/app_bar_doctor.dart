@@ -4,13 +4,14 @@ import 'package:app_postsalud/widgets/reusable_popup_menu_item_app_bar.dart';
 
 class AppBarDoctor extends StatelessWidget implements PreferredSizeWidget {
   final String userName;
+  final String title;
 
-  const AppBarDoctor({super.key, required this.userName});
+  const AppBarDoctor({super.key, required this.userName, required this.title});
 
   @override
   Widget build(BuildContext context) {
     return ReusableAppBar(
-      title: 'Home Doctor',
+      title: title,
       userName: userName,
       popupMenuItems: [
         ReusablePopupMenuItem(

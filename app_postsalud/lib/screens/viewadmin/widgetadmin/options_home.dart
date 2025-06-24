@@ -34,7 +34,7 @@ class _OptionsHomeState extends State<OptionsHome> {
                 PopupMenuItem(
                   child: Text('Medicos'),
                   onTap: () {
-                    // Acción para Opción 1
+                    Navigator.pushReplacementNamed(context, 'listadoctor');
                   },
                 ),
                 PopupMenuItem(
@@ -90,7 +90,9 @@ class _OptionsHomeState extends State<OptionsHome> {
         SizedBox(height: 20), // Espacio entre botones
         CustomButton(
           color: Color.fromRGBO(133, 203, 191, 1),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, 'listacitas');
+          },
           imagePath: 'assets/img/fondoLogin.png', // Imagen modificada
           text: 'Citas', // Texto modificado
         ),
