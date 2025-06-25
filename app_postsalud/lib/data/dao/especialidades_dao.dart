@@ -24,4 +24,18 @@ class EspecialidadDao {
     await conn.close();
     return especialidades;
   }
+
+  static Future<List<EspecialidadEntity>> getNombreforId(
+      int idespecialidad) async {
+    var conn = await DatabaseService.connect();
+    var result = await conn.execute(
+      'SELECT * FROM especialidades WHERE id_especialidad = :id_especialidad',
+      {'id_especialidad': idespecialidad},
+    );
+    List<EspecialidadEntity> especialidades = result.rows
+        .map((row) => EspecialidadEntity.fromMap(row.assoc()))
+        .toList();
+    await conn.close();
+    return especialidades;
+  }
 }

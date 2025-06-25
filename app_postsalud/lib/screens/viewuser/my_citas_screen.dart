@@ -1,5 +1,6 @@
 import 'package:app_postsalud/data/controllers/usuarios_controller.dart';
 import 'package:app_postsalud/data/dao/citas_dao.dart';
+import 'package:app_postsalud/data/dao/especialidades_dao.dart';
 import 'package:app_postsalud/data/entity/citas_entity.dart';
 import 'package:app_postsalud/data/entity/usuarios_entity.dart';
 import 'package:app_postsalud/screens/viewadmin/widgetadmin/app_bar_admin.dart';
@@ -17,22 +18,28 @@ class _MyCitasScreenState extends State<MyCitasScreen> {
   Future<List<CitasEntity>> _futureCitas = Future.value([]);
   String userName = 'Paciente'; // Valor por defecto
   UsuariosEntity? usuarioPaciente;
+  Map<int, String> especialidadesMap = {};
 
   @override
   void initState() {
     super.initState();
-    cargarUsuarioPaciente(); // Llamar la función al iniciar
+    cargarEspecialidadesYCitas();
   }
 
-  void cargarUsuarioPaciente() async {
-    List<UsuariosEntity> usuarios =
-        await UsuariosController.obtenerUsuariosPaciente();
+  void cargarEspecialidadesYCitas() async {
+    final lista = await EspecialidadDao.getEspecialidades();
+    final usuarios = await UsuariosController.obtenerUsuariosPaciente();
+
     if (usuarios.isNotEmpty) {
+      final user = usuarios.first;
+
       setState(() {
-        usuarioPaciente =
-            usuarios.first; // Tomar el primer usuario con idRol == 1
-        userName = usuarioPaciente!.nombres; // Actualizar userName
-        _futureCitas = CitasDao.getCitasPorUsuario(usuarioPaciente!.idUsuario!);
+        usuarioPaciente = user;
+        userName = user.nombres;
+        especialidadesMap = {
+          for (var esp in lista) esp.idEspecialidad!: esp.nombre
+        };
+        _futureCitas = CitasDao.getCitasPorUsuario(user.idUsuario!);
       });
     }
   }
@@ -89,7 +96,9 @@ class _MyCitasScreenState extends State<MyCitasScreen> {
                             Text(
                                 'Hora: ${cita.hora!.hour.toString().padLeft(2, '0')}:${cita.hora!.minute.toString().padLeft(2, '0')}'),
                             Text('Médico ID: ${cita.idmedico}'),
-                            Text('Especialidad ID: ${cita.idespecialidad}'),
+                            Text(
+                              'ID ${cita.idespecialidad} - Especialidad: ${especialidadesMap[cita.idespecialidad] ?? 'Desconocida'}',
+                            ),
                             Text('Tipo: ${cita.tipocita}'),
                             Text('Estado: ${cita.estado}'),
                             Text('Motivo: ${cita.motivo ?? '-'}'),

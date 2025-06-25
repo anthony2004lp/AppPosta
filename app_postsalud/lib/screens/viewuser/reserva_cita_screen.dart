@@ -30,12 +30,13 @@ class _ReservaCitaScreenState extends State<ReservaCitaScreen> {
   void initState() {
     super.initState();
     cargarEspecialidades();
-    _citasFuture = CitasController.obtenerCitas();
+    _citasFuture =
+        Future.value([]); // inicializamos vacío hasta resolver argumentos
     cargarUsuarioPaciente(); // Llamar la función al iniciar
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final args = ModalRoute.of(context)!.settings.arguments;
-      if (args != null) {
-        idPosta = args as int;
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args != null && args is int) {
+        idPosta = args;
         final posta =
             await PostasMedicasController.obtenerPostaMedicaPorId(idPosta);
         if (posta != null) {
@@ -45,6 +46,12 @@ class _ReservaCitaScreenState extends State<ReservaCitaScreen> {
             _citasFuture = CitasController.obtenerCitasPorIdPosta(idPosta);
           });
         }
+      } else {
+        setState(() {
+          _citasFuture = CitasController.obtenerCitas(); // ← todas las citas
+          nombrePosta = 'Todas las postas';
+          sede = '-';
+        });
       }
     });
   }
@@ -69,8 +76,6 @@ class _ReservaCitaScreenState extends State<ReservaCitaScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final int idPosta = ModalRoute.of(context)!.settings.arguments as int;
-
     return Scaffold(
       appBar: AppBarUser(userName: userName, title: 'Reservar Cita'),
       body: SafeArea(
@@ -125,8 +130,12 @@ class _ReservaCitaScreenState extends State<ReservaCitaScreen> {
                   future: _citasFuture,
                   builder: (context, snapshot) {
                     if (_todasLasCitas.isEmpty) {
-                      _todasLasCitas = snapshot.data ?? [];
-                      _citasFiltradas = _todasLasCitas;
+                      final todas = snapshot.data ?? [];
+                      _todasLasCitas = todas
+                          .where((cita) =>
+                              cita.idusuario == null || cita.idusuario == 0)
+                          .toList();
+                      _citasFiltradas = List.from(_todasLasCitas);
                     }
 
                     if (snapshot.hasError) {
@@ -185,7 +194,6 @@ class _ReservaCitaScreenState extends State<ReservaCitaScreen> {
                                     context,
                                     citaReservada,
                                     () {
-                                      // Solo mostramos el mensaje, sin cerrar pantalla
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         SnackBar(
