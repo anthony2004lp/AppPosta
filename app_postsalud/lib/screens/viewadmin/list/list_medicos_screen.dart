@@ -542,7 +542,9 @@ Row materialButtonsDoctor(BuildContext context) {
     mainAxisAlignment: MainAxisAlignment.spaceAround,
     children: [
       MaterialButton(
-        onPressed: () {},
+        onPressed: () {
+          // mostrarFormularioRegistro(context);
+        },
         color: Colors.green,
         child: const Text('Agregar Doctor',
             style: TextStyle(color: Colors.white, fontSize: 18)),

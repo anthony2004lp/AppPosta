@@ -31,7 +31,7 @@ class AppBarUser extends StatelessWidget implements PreferredSizeWidget {
           icon: Icons.calendar_today,
           text: 'Citas',
           onTap: () {
-            // Lógica para navegar a la pantalla de citas
+            Navigator.pushReplacementNamed(context, 'miscitas');
           },
         ),
         ReusablePopupMenuItem(

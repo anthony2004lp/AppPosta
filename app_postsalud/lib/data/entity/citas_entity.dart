@@ -2,31 +2,33 @@ import 'package:flutter/material.dart';
 
 class CitasEntity {
   int idcita;
-  int idusuario;
+  int? idusuario;
   int idmedico;
   int idespecialidad;
-  DateTime fecha;
-  TimeOfDay hora;
+  int? idposta;
+  DateTime? fecha;
+  TimeOfDay? hora;
   String tipocita;
   String estado;
-  String motivo;
+  String? motivo;
   String observaciones;
-  DateTime fechareprogramada;
-  TimeOfDay horareprogramada;
+  DateTime? fechareprogramada;
+  TimeOfDay? horareprogramada;
 
   CitasEntity({
     required this.idcita,
-    required this.idusuario,
+    this.idusuario,
     required this.idmedico,
     required this.idespecialidad,
-    required this.fecha,
-    required this.hora,
+    this.idposta,
+    this.fecha,
+    this.hora,
     required this.tipocita,
     required this.estado,
     required this.motivo,
     required this.observaciones,
-    required this.fechareprogramada,
-    required this.horareprogramada,
+    this.fechareprogramada,
+    this.horareprogramada,
   });
 
   factory CitasEntity.fromMap(Map<String, dynamic> map) {
@@ -40,6 +42,9 @@ class CitasEntity {
       idespecialidad: map['id_especialidad'] != null
           ? int.parse(map['id_especialidad'].toString())
           : 0,
+      idposta: map['id_posta'] != null
+          ? int.parse(map['id_posta'].toString())
+          : null,
       fecha: DateTime.parse(map['fecha'])
           .toLocal()
           .copyWith(hour: 0, minute: 0, second: 0),
@@ -69,20 +74,26 @@ class CitasEntity {
   }
 
   Map<String, dynamic> toMap() {
+    String formatTime(TimeOfDay? t) {
+      if (t == null) return '00:00:00';
+      return '${t.hour.toString().padLeft(2, '0')}:'
+          '${t.minute.toString().padLeft(2, '0')}:00';
+    }
+
     return {
       'id_cita': idcita,
       'id_usuario': idusuario,
       'id_medico': idmedico,
       'id_especialidad': idespecialidad,
-      'fecha': fecha.toIso8601String(),
-      'hora':
-          '${hora.hour.toString().padLeft(2, '0')}:${hora.minute.toString().padLeft(2, '0')}',
+      'id_posta': idposta,
+      'fecha': fecha?.toIso8601String(),
+      'hora': formatTime(hora),
       'tipo_cita': tipocita,
       'estado': estado,
-      'hora_reprogramada':
-          '${horareprogramada.hour.toString().padLeft(2, '0')}:${horareprogramada.minute.toString().padLeft(2, '0')}',
+      'motivo': motivo,
       'observaciones': observaciones,
-      'fecha_reprogramada': fechareprogramada.toIso8601String(),
+      'fecha_reprogramada': fechareprogramada?.toIso8601String(),
+      'hora_reprogramada': formatTime(horareprogramada),
     };
   }
 }

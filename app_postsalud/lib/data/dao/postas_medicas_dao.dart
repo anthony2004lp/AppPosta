@@ -11,4 +11,18 @@ class PostasMedicasDao {
     await conn.close();
     return postas;
   }
+
+  static Future<PostasMedicasEntity?> getPostaById(int idPosta) async {
+    var conn = await DatabaseService.connect();
+    var result = await conn
+        .execute("SELECT * FROM postas_medicas WHERE id_posta = :id_posta", {
+      'id_posta': idPosta,
+    });
+    PostasMedicasEntity? posta;
+    if (result.rows.isNotEmpty) {
+      posta = PostasMedicasEntity.fromMap(result.rows.first.assoc());
+    }
+    await conn.close();
+    return posta;
+  }
 }

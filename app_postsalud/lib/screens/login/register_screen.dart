@@ -19,6 +19,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController direccionController = TextEditingController();
+  String sexoSeleccionado = 'Masculino';
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -93,17 +96,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
   List<Widget> registerFields(BuildContext context) {
     return [
       textFormFieldName(),
-      const SizedBox(height: 20),
+      const SizedBox(height: 10),
       textFormFieldLastName(),
-      const SizedBox(height: 20),
+      const SizedBox(height: 10),
       textFormFieldDni(),
-      const SizedBox(height: 20),
+      const SizedBox(height: 10),
       textFormFieldPhone(),
-      const SizedBox(height: 20),
+      const SizedBox(height: 10),
       textFormFieldEmail(),
-      const SizedBox(height: 25),
+      const SizedBox(height: 10),
+      textFormFieldDireccion(),
+      const SizedBox(height: 10),
+      textFormFieldFechaNacimiento(),
+      const SizedBox(height: 10),
+      dropdownSexo(),
+      const SizedBox(height: 10),
+      // textFormFieldFoto(),
       textFormFieldPassword(),
-      const SizedBox(height: 25),
+      const SizedBox(height: 10),
       buttonRegistrarse(context),
       const SizedBox(
         height: 10,
@@ -172,6 +182,53 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
+  TextFormField textFormFieldFechaNacimiento() {
+    return TextFormField(
+      controller: nameController,
+      keyboardType: TextInputType.datetime,
+      decoration: InputDecorations.inputDecoration(
+        hintText: "DD/MM/AAAA",
+        labelText: "Fecha de Nacimiento",
+        icono: Icon(Icons.location_on),
+      ),
+    );
+  }
+
+  TextFormField textFormFieldDireccion() {
+    return TextFormField(
+      controller: nameController,
+      keyboardType: TextInputType.name,
+      decoration: InputDecorations.inputDecoration(
+        hintText: "Av. Siempre Viva 123",
+        labelText: "Direccion",
+        icono: Icon(Icons.location_on),
+      ),
+    );
+  }
+
+  DropdownButtonFormField<String> dropdownSexo() {
+    return DropdownButtonFormField<String>(
+        value: sexoSeleccionado,
+        items: const [
+          DropdownMenuItem(value: 'Masculino', child: Text('Masculino')),
+          DropdownMenuItem(value: 'Femenino', child: Text('Femenino')),
+          DropdownMenuItem(value: 'Otro', child: Text('Otro')),
+        ],
+        onChanged: (String? newValue) {
+          if (newValue != null) {
+            setState(() {
+              sexoSeleccionado = newValue;
+            });
+          }
+        },
+        decoration: InputDecorations.inputDecoration(
+            labelText: 'Sexo',
+            icono: const Icon(Icons.male),
+            hintText: 'jjjn'));
+  }
+
+  // Automatizar la fecha de registro de los usuarios
+
   TextFormField textFormFieldEmail() {
     return TextFormField(
       controller: emailController,
@@ -224,12 +281,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
           telefono: phoneController.text.trim(),
           email: emailController.text.trim(),
           contrasena: passwordController.text.trim(),
-          direccion: "", // Puedes agregar un campo de dirección si lo necesitas
+          direccion: direccionController.text
+              .trim(), // Puedes agregar un campo de dirección si lo necesitas
           fechaNacimiento: DateTime.now(), // Ajusta según tu lógica
-          sexo: "Otro", // Puedes agregar un campo de selección
+          sexo: sexoSeleccionado, // Puedes agregar un campo de selección
           fotoUrl: "",
           idRol: 1, // Define el rol según tu lógica
-          estado: "activo", // Estado activo
+          estado: "Activo", // Estado activo
           fechaRegistro: DateTime.now(), // Estado activo
         );
 

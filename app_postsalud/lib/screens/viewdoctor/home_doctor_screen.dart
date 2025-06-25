@@ -18,12 +18,12 @@ class _HomeDoctorScreenState extends State<HomeDoctorScreen> {
   @override
   void initState() {
     super.initState();
-    cargarUsuarioAdmin(); // Llamar la función al iniciar
+    cargarUsuarioDoctor(); // Llamar la función al iniciar
   }
 
-  void cargarUsuarioAdmin() async {
+  void cargarUsuarioDoctor() async {
     List<UsuariosEntity> usuarios =
-        await UsuariosController.obtenerUsuariosAdmin();
+        await UsuariosController.obtenerUsuariosMedico();
     if (usuarios.isNotEmpty) {
       setState(() {
         usuarioMedico =
@@ -63,7 +63,9 @@ class _HomeDoctorScreenState extends State<HomeDoctorScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     CustomButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, 'mispacientes');
+                      },
                       imagePath:
                           'assets/img/fondoLogin.png', // Imagen modificada
                       text: 'Mis\nPacientes', // Texto modificado
@@ -73,7 +75,7 @@ class _HomeDoctorScreenState extends State<HomeDoctorScreen> {
                       onPressed: () {},
                       imagePath:
                           'assets/img/fondoLogin.png', // Imagen modificada
-                      text: 'Ver\nReportes', // Texto modificado
+                      text: 'Mis citas', // Texto modificado
                     ),
                     SizedBox(height: 20), // Espacio entre botones
                     CustomButton(

@@ -221,12 +221,12 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
                         child: ExpansionTile(
                           title: Text('Cita ID: ${c.idcita}'),
                           subtitle: Text(
-                            'Usuario: ${c.idusuario} | Médico: ${c.idmedico} | Fecha: ${DateFormat('yyyy-MM-dd').format(c.fecha)}',
+                            'Usuario: ${c.idusuario} | Médico: ${c.idmedico} | Fecha: ${DateFormat('yyyy-MM-dd').format(c.fecha ?? DateTime.now())}',
                           ),
                           children: [
                             ListTile(
                                 title: Text(
-                                    'Hora: ${c.hora.hour.toString().padLeft(2, '0')}:${c.hora.minute.toString().padLeft(2, '0')}')),
+                                    'Hora: ${c.hora?.hour.toString().padLeft(2, '0')}:${c.hora?.minute.toString().padLeft(2, '0')}')),
                             ListTile(
                                 title: Text(
                                     'Especialidad ID: ${c.idespecialidad}')),
@@ -239,10 +239,10 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
                                     Text('Observaciones: ${c.observaciones}')),
                             ListTile(
                                 title: Text(
-                                    'Fecha Reprogramada: ${DateFormat('yyyy-MM-dd').format(c.fechareprogramada)}')),
+                                    'Fecha Reprogramada: ${DateFormat('yyyy-MM-dd').format(c.fechareprogramada ?? DateTime.now())}')),
                             ListTile(
                                 title: Text(
-                                    'Hora Reprogramada: ${c.horareprogramada.hour.toString().padLeft(2, '0')}:${c.horareprogramada.minute.toString().padLeft(2, '0')}')),
+                                    'Hora Reprogramada: ${c.horareprogramada?.hour.toString().padLeft(2, '0')}:${c.horareprogramada?.minute.toString().padLeft(2, '0')}')),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
@@ -252,7 +252,7 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
                                         TextEditingController(
                                             text: citas[index]
                                                 .fecha
-                                                .toLocal()
+                                                ?.toLocal()
                                                 .toString()
                                                 .split('T')
                                                 .first);
@@ -260,7 +260,7 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
                                         TextEditingController(
                                             text: citas[index]
                                                 .hora
-                                                .format(context));
+                                                ?.format(context));
                                     final tipoCitaController =
                                         TextEditingController(
                                             text: citas[index].tipocita);
@@ -274,14 +274,14 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
                                         TextEditingController(
                                             text: citas[index]
                                                 .fechareprogramada
-                                                .toLocal()
+                                                ?.toLocal()
                                                 .toString()
                                                 .split('T')
                                                 .first);
                                     final horaReprogramadaController =
                                         TextEditingController(
                                             text:
-                                                '${citas[index].horareprogramada.hour.toString().padLeft(2, '0')}:${citas[index].horareprogramada.minute.toString().padLeft(2, '0')}');
+                                                '${citas[index].horareprogramada?.hour.toString().padLeft(2, '0')}:${citas[index].horareprogramada?.minute.toString().padLeft(2, '0')}');
                                     String estadoSeleccionado =
                                         citas[index].estado;
                                     showDialog(
@@ -298,7 +298,7 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
                                                           TextEditingController(
                                                             text: citas[index]
                                                                 .fecha
-                                                                .toLocal()
+                                                                ?.toLocal()
                                                                 .toString()
                                                                 .split('T')
                                                                 .first,
@@ -311,7 +311,7 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
                                                           TextEditingController(
                                                             text: citas[index]
                                                                 .hora
-                                                                .format(
+                                                                ?.format(
                                                                     context),
                                                           ),
                                                           'Hora (HH:mm)',
@@ -340,7 +340,7 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
                                                           TextEditingController(
                                                             text: citas[index]
                                                                 .fechareprogramada
-                                                                .toLocal()
+                                                                ?.toLocal()
                                                                 .toString()
                                                                 .split('T')
                                                                 .first,
@@ -352,7 +352,7 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
                                                       _buildTextField(
                                                         TextEditingController(
                                                           text:
-                                                              '${citas[index].horareprogramada.hour.toString().padLeft(2, '0')}:${citas[index].horareprogramada.minute.toString().padLeft(2, '0')}',
+                                                              '${citas[index].horareprogramada?.hour.toString().padLeft(2, '0')}:${citas[index].horareprogramada?.minute.toString().padLeft(2, '0')}',
                                                         ),
                                                         'Hora Reprogramada (HH:mm)',
                                                         keyboardType:

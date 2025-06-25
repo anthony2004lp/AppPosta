@@ -6,4 +6,13 @@ class PostasMedicasController {
     List<PostasMedicasEntity> postas = await PostasMedicasDao.getPostas();
     return postas;
   }
+
+  static Future<PostasMedicasEntity?> obtenerPostaMedicaPorId(
+      int idPosta) async {
+    PostasMedicasEntity? posta = await PostasMedicasDao.getPostaById(idPosta);
+    if (posta != null) {
+      return posta;
+    }
+    return null;
+  }
 }

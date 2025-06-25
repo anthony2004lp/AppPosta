@@ -55,4 +55,8 @@ class CitasController {
       );
     }
   }
+
+  static Future<List<CitasEntity>> obtenerCitasPorIdPosta(int idPosta) async {
+    return await CitasDao.getCitasPorIdPosta(idPosta);
+  }
 }

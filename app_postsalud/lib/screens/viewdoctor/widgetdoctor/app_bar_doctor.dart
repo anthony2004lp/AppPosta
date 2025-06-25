@@ -16,6 +16,13 @@ class AppBarDoctor extends StatelessWidget implements PreferredSizeWidget {
       popupMenuItems: [
         ReusablePopupMenuItem(
           icon: Icons.person,
+          text: 'Home',
+          onTap: () {
+            Navigator.pushReplacementNamed(context, 'homedoctor');
+          },
+        ),
+        ReusablePopupMenuItem(
+          icon: Icons.person,
           text: 'Mi Perfil',
           onTap: () {
             Navigator.pushReplacementNamed(context, 'myperfildoctor');

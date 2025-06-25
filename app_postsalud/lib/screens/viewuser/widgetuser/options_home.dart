@@ -148,14 +148,16 @@ Row optionsHomeUser(BuildContext context) {
             ),
             const SizedBox(height: 10),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, 'miscitas');
+              },
               style: TextButton.styleFrom(
                 padding: EdgeInsets.zero,
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               child: const Text(
-                'Consulta\nMédica',
+                'Mis citas',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 12,
