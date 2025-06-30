@@ -1,5 +1,6 @@
 import 'package:app_postsalud/data/dao/medicos_dao.dart';
 import 'package:app_postsalud/data/entity/medicos_entity.dart';
+import 'package:app_postsalud/services/database_service.dart';
 import 'package:flutter/material.dart';
 
 class MedicosController {
@@ -10,6 +11,10 @@ class MedicosController {
   // Actualizar un usuario existente
   static Future<void> actualizarMedico(MedicosEntity medico) async {
     await MedicosDao.updateMedico(medico);
+  }
+
+  static Future<MedicosEntity?> obtenerMedicoPorUsuario(int idUsuario) async {
+    return await MedicosDao.getMedicoPorUsuario(idUsuario);
   }
 
   static Future<void> agregarMedico(
@@ -33,6 +38,19 @@ class MedicosController {
 
   static Future<List<MedicosEntity>> obtenerMedicosPorPosta(int idPosta) async {
     return await MedicosDao.obtenerMedicosPorPosta(idPosta);
+  }
+
+  static Future<int?> obtenerIdMedicoPorUsuario(int idUsuario) async {
+    final conn = await DatabaseService.connect();
+    final result = await conn.execute(
+      'SELECT id_medico FROM medicos WHERE id_usuario = :id',
+      {'id': idUsuario},
+    );
+    await conn.close();
+    if (result.isNotEmpty) {
+      return int.tryParse(result.rows.first.assoc()['id_medico'].toString());
+    }
+    return null;
   }
 
   static Future<void> eliminarMedico(

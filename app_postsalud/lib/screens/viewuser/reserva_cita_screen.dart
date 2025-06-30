@@ -25,11 +25,15 @@ class _ReservaCitaScreenState extends State<ReservaCitaScreen> {
   late int idPosta;
   String nombrePosta = '';
   String sede = '';
+  late int idUsuario;
 
   @override
   void initState() {
     super.initState();
     cargarEspecialidades();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      idUsuario = ModalRoute.of(context)!.settings.arguments as int;
+    });
     _citasFuture =
         Future.value([]); // inicializamos vacío hasta resolver argumentos
     cargarUsuarioPaciente(); // Llamar la función al iniciar
@@ -64,13 +68,11 @@ class _ReservaCitaScreenState extends State<ReservaCitaScreen> {
   }
 
   void cargarUsuarioPaciente() async {
-    List<UsuariosEntity> usuarios =
-        await UsuariosController.obtenerUsuariosPaciente();
-    if (usuarios.isNotEmpty) {
-      setState(() {
-        usuarioPaciente = usuarios.first;
-        userName = usuarioPaciente!.nombres; // Actualizar userName
-      });
+    UsuariosEntity? usuario =
+        await UsuariosController.obtenerUsuarioPacienteId(idUsuario);
+    if (usuario != null) {
+      // úsalo directamente
+      userName = usuario.nombres;
     }
   }
 

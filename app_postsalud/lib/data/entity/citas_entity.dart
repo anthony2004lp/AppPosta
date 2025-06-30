@@ -1,32 +1,32 @@
 import 'package:flutter/material.dart';
 
 class CitasEntity {
-  int idcita;
+  int? idcita;
   int? idusuario;
-  int idmedico;
-  int idespecialidad;
+  int? idmedico;
+  int? idespecialidad;
   int? idposta;
   DateTime? fecha;
   TimeOfDay? hora;
-  String tipocita;
-  String estado;
+  String? tipocita;
+  String? estado;
   String? motivo;
-  String observaciones;
+  String? observaciones;
   DateTime? fechareprogramada;
   TimeOfDay? horareprogramada;
 
   CitasEntity({
-    required this.idcita,
+    this.idcita,
     this.idusuario,
-    required this.idmedico,
-    required this.idespecialidad,
+    this.idmedico,
+    this.idespecialidad,
     this.idposta,
     this.fecha,
     this.hora,
-    required this.tipocita,
-    required this.estado,
-    required this.motivo,
-    required this.observaciones,
+    this.tipocita,
+    this.estado,
+    this.motivo,
+    this.observaciones,
     this.fechareprogramada,
     this.horareprogramada,
   });

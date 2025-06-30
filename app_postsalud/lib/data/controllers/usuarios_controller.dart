@@ -74,15 +74,19 @@ class UsuariosController {
     return admin.nombres;
   }
 
-  static Future<List<UsuariosEntity>> obtenerUsuariosMedico() async {
-    List<UsuariosEntity> usuarios = await UsuariosDao.getUsuarios();
-    return usuarios.where((user) => user.idRol == 2).toList();
+  // static Future<List<UsuariosEntity>> obtenerUsuariosMedico(int idUsuario) async {
+  //   List<UsuariosEntity> usuarios = await UsuariosDao.getUsuarios();
+  //   return usuarios.where((user) => user.idRol == 2).toList();
+  // }
+
+  static Future<UsuariosEntity?> obtenerUsuarioPorId(int idUsuario) async {
+    return await UsuariosDao.getUsuarioPorId(idUsuario);
   }
 
   static Future<String?> obtenerNombreMedico() async {
     List<UsuariosEntity> usuarios = await UsuariosDao.getUsuarios();
     UsuariosEntity? medico = usuarios.firstWhere(
-      (user) => user.idRol == 3,
+      (user) => user.idRol == 2,
       orElse: () => UsuariosEntity(
         nombres: "Administrador", // Valor por defecto si no se encuentra
         apellidos: "",
@@ -100,9 +104,26 @@ class UsuariosController {
     return medico.nombres;
   }
 
-  static Future<List<UsuariosEntity>> obtenerUsuariosPaciente() async {
+  static Future<UsuariosEntity?> obtenerUsuarioMedicoId(int idUsuario) async {
     List<UsuariosEntity> usuarios = await UsuariosDao.getUsuarios();
-    return usuarios.where((user) => user.idRol == 1).toList();
+    try {
+      return usuarios.firstWhere(
+        (u) => u.idRol == 2 && u.idUsuario == idUsuario,
+      );
+    } catch (_) {
+      return null; // Si no lo encuentra, devolvemos null
+    }
+  }
+
+  static Future<UsuariosEntity?> obtenerUsuarioPacienteId(int idUsuario) async {
+    List<UsuariosEntity> usuarios = await UsuariosDao.getUsuarios();
+    try {
+      return usuarios.firstWhere(
+        (u) => u.idRol == 1 && u.idUsuario == idUsuario,
+      );
+    } catch (_) {
+      return null; // Si no lo encuentra, devolvemos null
+    }
   }
 
   static Future<String?> obtenerNombrePaciente() async {

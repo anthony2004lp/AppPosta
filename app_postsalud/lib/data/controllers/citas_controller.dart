@@ -1,5 +1,7 @@
 import 'package:app_postsalud/data/dao/citas_dao.dart';
 import 'package:app_postsalud/data/entity/citas_entity.dart';
+import 'package:app_postsalud/data/entity/paciente_cita.dart';
+import 'package:app_postsalud/services/database_service.dart';
 import 'package:flutter/material.dart';
 
 class CitasController {
@@ -9,6 +11,19 @@ class CitasController {
     } catch (e) {
       return Future.error("Error al obtener las citas: $e");
     }
+  }
+
+  // data/controllers/citas_controller.dart
+  static Future<List<CitasEntity>> obtenerCitasPorUsuarioMedico(int idUsuario) {
+    return CitasDao.getCitasPorUsuarioMedico(idUsuario);
+  }
+
+  static Future<bool> guardarObservaciones(int idCita, String obs) {
+    return CitasDao.updateObservaciones(idCita, obs);
+  }
+
+  static Future<bool> actualizarCitaDetalles(CitasEntity cita) {
+    return CitasDao.updateCitaDetalles(cita);
   }
 
   static Future<void> agregarCita(
@@ -54,6 +69,25 @@ class CitasController {
         SnackBar(content: Text('Error al eliminar la cita: $e')),
       );
     }
+  }
+
+  static Future<List<CitasEntity>> getCitasPorMedico(int idMedico) async {
+    var conn = await DatabaseService.connect();
+    var result = await conn.execute(
+      "SELECT * FROM citas "
+      "WHERE id_medico = :id_medico "
+      "AND id_usuario IS NOT NULL",
+      {'id_medico': idMedico},
+    );
+    List<CitasEntity> citas =
+        result.rows.map((row) => CitasEntity.fromMap(row.assoc())).toList();
+    await conn.close();
+    return citas;
+  }
+
+  static Future<List<PacienteCita>> obtenerPacientesCitasPorMedico(
+      int idMedico) {
+    return CitasDao.getPacientesCitasPorMedico(idMedico);
   }
 
   static Future<List<CitasEntity>> obtenerCitasPorIdPosta(int idPosta) async {

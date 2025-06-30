@@ -4,6 +4,7 @@ import 'package:app_postsalud/data/entity/medicos_entity.dart';
 import 'package:app_postsalud/data/entity/usuarios_entity.dart';
 import 'package:app_postsalud/screens/viewadmin/widgetadmin/app_bar_admin.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ListMedicosScreen extends StatefulWidget {
   const ListMedicosScreen({super.key});
@@ -39,23 +40,27 @@ class _ListMedicosScreenState extends State<ListMedicosScreen> {
   void mostrarFormularioRegistro(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
 
-    final idMedicoController = TextEditingController();
-    final nombresController = TextEditingController();
-    final apellidosController = TextEditingController();
-    final dniController = TextEditingController();
-    final correoController = TextEditingController();
-    final telefonoController = TextEditingController();
-    final direccionPersonalController = TextEditingController();
-    final direccionConsultorioController = TextEditingController();
-    final ciudadController = TextEditingController();
-    final regionController = TextEditingController();
-    final horarioAtencionController = TextEditingController();
-    final fechaNacimientoController = TextEditingController();
-    final idEspecialidadController = TextEditingController();
-    final idPostaController = TextEditingController();
+    final TextEditingController nombresController = TextEditingController();
+    final TextEditingController apellidosController = TextEditingController();
+    final TextEditingController dniController = TextEditingController();
+    final TextEditingController correoController = TextEditingController();
+    final TextEditingController telefonoController = TextEditingController();
+    final TextEditingController direccionPersonalController =
+        TextEditingController();
+    final TextEditingController direccionConsultorioController =
+        TextEditingController();
+    final TextEditingController ciudadController = TextEditingController();
+    final TextEditingController regionController = TextEditingController();
+    final TextEditingController horarioAtencionController =
+        TextEditingController();
+    final TextEditingController fechaNacimientoController =
+        TextEditingController();
+    final TextEditingController idEspecialidadController =
+        TextEditingController();
+    final TextEditingController idPostaController = TextEditingController();
 
-    String sexoSeleccionado = 'Masculino';
-    String fotoUrl = '';
+    String sexoControler = 'Masculino';
+    // String fotoUrl = '';
 
     showDialog(
       context: context,
@@ -68,21 +73,12 @@ class _ListMedicosScreenState extends State<ListMedicosScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // ImageField(
-                  //   imageDefault: '',
-                  //   onSelectedImage: (path) {
-                  //     setState(() {
-                  //       fotoUrl =
-                  //           path; // Guardar la ruta de la imagen en fotoUrl
-                  //     });
-                  //   },
-                  // ),
-                  _buildTextField(idMedicoController, 'ID Médico',
-                      keyboardType: TextInputType.number),
                   _buildTextField(nombresController, 'Nombres'),
                   _buildTextField(apellidosController, 'Apellidos'),
-                  _buildTextField(dniController, 'DNI',
-                      keyboardType: TextInputType.number),
+                  _buildTextField(
+                    dniController,
+                    'DNI',
+                  ),
                   _buildTextField(correoController, 'Correo'),
                   _buildTextField(telefonoController, 'Teléfono'),
                   _buildTextField(
@@ -101,12 +97,12 @@ class _ListMedicosScreenState extends State<ListMedicosScreen> {
                       fechaNacimientoController, 'Fecha de Nacimiento',
                       keyboardType: TextInputType.datetime),
                   DropdownButtonFormField(
-                    value: sexoSeleccionado,
+                    value: sexoControler,
                     items: ['Masculino', 'Femenino']
                         .map((sexo) =>
                             DropdownMenuItem(value: sexo, child: Text(sexo)))
                         .toList(),
-                    onChanged: (value) => sexoSeleccionado = value.toString(),
+                    onChanged: (value) => sexoControler = value.toString(),
                     decoration: const InputDecoration(labelText: 'Sexo'),
                   ),
                 ],
@@ -120,37 +116,34 @@ class _ListMedicosScreenState extends State<ListMedicosScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  MedicosEntity nuevoMedico = MedicosEntity(
-                    nombres: nombresController.text,
-                    apellidos: apellidosController.text,
-                    dni: dniController.text,
-                    correo: correoController.text,
-                    telefono: telefonoController.text,
-                    direccionPersonal: direccionPersonalController.text,
-                    direccionConsultorio: direccionConsultorioController.text,
-                    ciudad: ciudadController.text,
-                    region: regionController.text,
-                    horarioAtencion: horarioAtencionController.text,
-                    fotoUrl: fotoUrl,
-                    fechaNacimiento:
-                        DateTime.tryParse(fechaNacimientoController.text),
-                    sexo: sexoSeleccionado,
-                    idEspecialidad:
-                        int.tryParse(idEspecialidadController.text) ?? 0,
-                    idPosta: int.tryParse(idPostaController.text) ?? 0,
-                    idMedico: idMedicoController.text.isNotEmpty
-                        ? int.tryParse(idMedicoController.text)
-                        : null,
-                  );
+                if (!_formKey.currentState!.validate()) return;
+                MedicosEntity nuevoMedico = MedicosEntity(
+                  nombres: nombresController.text,
+                  apellidos: apellidosController.text,
+                  dni: dniController.text,
+                  correo: correoController.text,
+                  telefono: telefonoController.text,
+                  direccionPersonal: direccionPersonalController.text,
+                  direccionConsultorio: direccionConsultorioController.text,
+                  ciudad: ciudadController.text,
+                  region: regionController.text,
+                  horarioAtencion: horarioAtencionController.text,
+                  // fotoUrl: fotoUrl,
+                  fechaNacimiento:
+                      DateTime.tryParse(fechaNacimientoController.text) ??
+                          DateTime.now(),
+                  sexo: sexoControler,
+                  idEspecialidad:
+                      int.tryParse(idEspecialidadController.text) ?? 0,
+                  idPosta: int.tryParse(idPostaController.text) ?? 0,
+                );
 
-                  MedicosController.agregarMedico(context, nuevoMedico, () {
-                    setState(() {
-                      _medicosFuture =
-                          MedicosController.obtenerMedicos(); // Recargar lista
-                    });
+                MedicosController.agregarMedico(context, nuevoMedico, () {
+                  Navigator.pop(context); // <- cierra el diálogo
+                  setState(() {
+                    _medicosFuture = MedicosController.obtenerMedicos();
                   });
-                }
+                });
               },
               child: const Text('Guardar'),
             ),
@@ -186,6 +179,21 @@ class _ListMedicosScreenState extends State<ListMedicosScreen> {
     );
   }
 
+  Widget _buildPickerField({
+    required TextEditingController controller,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return TextFormField(
+      controller: controller,
+      readOnly: true,
+      decoration: InputDecoration(labelText: label),
+      onTap: onTap,
+      validator: (v) =>
+          (v == null || v.isEmpty) ? 'Por favor selecciona una fecha' : null,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -198,7 +206,7 @@ class _ListMedicosScreenState extends State<ListMedicosScreen> {
               SizedBox(
                 height: 10,
               ),
-              materialButtonsDoctor(context),
+              materialButtonsDoctor(context, mostrarFormularioRegistro),
               Text('Lista de Medicos',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               Expanded(
@@ -243,7 +251,7 @@ class _ListMedicosScreenState extends State<ListMedicosScreen> {
                                       'Dirección personal: ${m.direccionPersonal}')),
                               ListTile(
                                   title: Text(
-                                      'Fecha de nacimiento: ${m.fechaNacimiento?.toLocal()}')),
+                                      'Fecha de nacimiento: ${DateFormat('yyyy-MM-dd').format(m.fechaNacimiento ?? DateTime.now())}')),
                               ListTile(title: Text('Sexo: ${m.sexo}')),
                               ListTile(
                                   title: Text(
@@ -260,69 +268,71 @@ class _ListMedicosScreenState extends State<ListMedicosScreen> {
                                 children: [
                                   ElevatedButton.icon(
                                     onPressed: () {
-                                      // Define controllers for each field with initial values
-                                      final idMedicoController =
-                                          TextEditingController(
-                                              text: medicos[index]
-                                                  .idMedico
-                                                  .toString());
                                       final nombresController =
                                           TextEditingController(
-                                              text: medicos[index].nombres);
+                                              text:
+                                                  medicos[index].nombres ?? '');
                                       final apellidosController =
                                           TextEditingController(
-                                              text: medicos[index].apellidos);
+                                              text: medicos[index].apellidos ??
+                                                  '');
                                       final dniController =
                                           TextEditingController(
-                                              text: medicos[index].dni);
+                                              text: medicos[index].dni ?? '');
                                       final correoController =
                                           TextEditingController(
-                                              text: medicos[index].correo);
+                                              text:
+                                                  medicos[index].correo ?? '');
                                       final telefonoController =
                                           TextEditingController(
-                                              text: medicos[index].telefono);
+                                              text: medicos[index].telefono ??
+                                                  '');
                                       final direccionPersonalController =
                                           TextEditingController(
                                               text: medicos[index]
-                                                  .direccionPersonal);
+                                                      .direccionPersonal ??
+                                                  '');
                                       final direccionConsultorioController =
                                           TextEditingController(
                                               text: medicos[index]
-                                                  .direccionConsultorio);
+                                                      .direccionConsultorio ??
+                                                  '');
                                       final ciudadController =
                                           TextEditingController(
-                                              text: medicos[index].ciudad);
+                                              text:
+                                                  medicos[index].ciudad ?? '');
                                       final regionController =
                                           TextEditingController(
-                                              text: medicos[index].region);
-                                      final fechaNacimientoController =
+                                              text:
+                                                  medicos[index].region ?? '');
+                                      final fechaNacCtrl =
                                           TextEditingController(
                                         text: medicos[index].fechaNacimiento !=
                                                 null
-                                            ? medicos[index]
-                                                .fechaNacimiento!
-                                                .toLocal()
-                                                .toString()
-                                                .split(' ')[0]
+                                            ? DateFormat('yyyy-MM-dd').format(
+                                                medicos[index].fechaNacimiento!)
                                             : '',
                                       );
                                       final horarioAtencionController =
                                           TextEditingController(
                                               text: medicos[index]
-                                                  .horarioAtencion);
-                                      final fotoUrlController =
-                                          TextEditingController(
-                                              text: medicos[index].fotoUrl);
+                                                      .horarioAtencion ??
+                                                  '');
+                                      // final fotoUrlController =
+                                      //     TextEditingController(
+                                      //         text: medicos[index].fotoUrl);
                                       final idEspecialidadController =
                                           TextEditingController(
                                               text: medicos[index]
-                                                  .idEspecialidad
-                                                  .toString());
+                                                      .idEspecialidad
+                                                      .toString() ??
+                                                  '');
                                       final idPostaController =
                                           TextEditingController(
                                               text: medicos[index]
-                                                  .idPosta
-                                                  .toString());
+                                                      .idPosta
+                                                      .toString() ??
+                                                  '');
                                       String? sexoSeleccionado =
                                           medicos[index].sexo;
 
@@ -336,59 +346,87 @@ class _ListMedicosScreenState extends State<ListMedicosScreen> {
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   _buildTextField(
-                                                      idMedicoController,
-                                                      "idMedicos"),
+                                                      nombresController,
+                                                      'Nombres',
+                                                      keyboardType:
+                                                          TextInputType.text),
                                                   _buildTextField(
-                                                    nombresController,
-                                                    'Nombres',
-                                                  ),
-                                                  _buildTextField(
-                                                    apellidosController,
-                                                    'Apellidos',
-                                                  ),
+                                                      apellidosController,
+                                                      'Apellidos',
+                                                      keyboardType:
+                                                          TextInputType.text),
                                                   _buildTextField(
                                                     dniController,
                                                     'DNI',
                                                     keyboardType:
-                                                        TextInputType.number,
+                                                        TextInputType.text,
                                                   ),
                                                   _buildTextField(
-                                                    correoController,
-                                                    'Correo',
-                                                  ),
+                                                      correoController,
+                                                      'Correo',
+                                                      keyboardType:
+                                                          TextInputType
+                                                              .emailAddress),
                                                   _buildTextField(
-                                                    telefonoController,
-                                                    'Teléfono',
-                                                  ),
+                                                      telefonoController,
+                                                      'Teléfono',
+                                                      keyboardType:
+                                                          TextInputType.text),
                                                   _buildTextField(
-                                                    direccionPersonalController,
-                                                    'Dirección Personal',
-                                                  ),
+                                                      direccionPersonalController,
+                                                      'Dirección Personal',
+                                                      keyboardType:
+                                                          TextInputType.text),
                                                   _buildTextField(
-                                                    direccionConsultorioController,
-                                                    'Dirección Consultorio',
-                                                  ),
+                                                      direccionConsultorioController,
+                                                      'Dirección Consultorio',
+                                                      keyboardType:
+                                                          TextInputType.text),
                                                   _buildTextField(
-                                                    ciudadController,
-                                                    'Ciudad',
-                                                  ),
+                                                      ciudadController,
+                                                      'Ciudad',
+                                                      keyboardType:
+                                                          TextInputType.text),
                                                   _buildTextField(
-                                                    regionController,
-                                                    'Región',
-                                                  ),
-                                                  _buildTextField(
-                                                    fechaNacimientoController,
-                                                    'Fecha de Nacimiento',
-                                                    keyboardType:
-                                                        TextInputType.datetime,
+                                                      regionController,
+                                                      'Región',
+                                                      keyboardType:
+                                                          TextInputType.text),
+                                                  _buildPickerField(
+                                                    controller: fechaNacCtrl,
+                                                    label:
+                                                        'Fecha de Nacimiento',
+                                                    onTap: () async {
+                                                      // Asegurarte de que initialDate nunca sea null:
+                                                      final initial = medicos[
+                                                                  index]
+                                                              .fechaNacimiento ??
+                                                          DateTime.now();
+                                                      final picked =
+                                                          await showDatePicker(
+                                                        context: context,
+                                                        initialDate: initial,
+                                                        firstDate: DateTime
+                                                                .now()
+                                                            .subtract(
+                                                                const Duration(
+                                                                    days: 365)),
+                                                        lastDate: DateTime.now()
+                                                            .add(const Duration(
+                                                                days: 365)),
+                                                      );
+                                                      if (picked != null) {
+                                                        // Formateas y actualizas el controller:
+                                                        fechaNacCtrl
+                                                            .text = DateFormat(
+                                                                'yyyy-MM-dd')
+                                                            .format(picked);
+                                                      }
+                                                    },
                                                   ),
                                                   _buildTextField(
                                                     horarioAtencionController,
                                                     'Horario de Atención',
-                                                  ),
-                                                  _buildTextField(
-                                                    fotoUrlController,
-                                                    'Foto URL',
                                                   ),
                                                   _buildTextField(
                                                     idEspecialidadController,
@@ -436,12 +474,8 @@ class _ListMedicosScreenState extends State<ListMedicosScreen> {
                                               onPressed: () {
                                                 final medicoModificado =
                                                     MedicosEntity(
-                                                  idMedico: idMedicoController
-                                                          .text.isNotEmpty
-                                                      ? int.tryParse(
-                                                          idMedicoController
-                                                              .text)
-                                                      : null,
+                                                  idMedico:
+                                                      medicos[index].idMedico,
                                                   nombres:
                                                       nombresController.text,
                                                   apellidos:
@@ -461,12 +495,11 @@ class _ListMedicosScreenState extends State<ListMedicosScreen> {
                                                   horarioAtencion:
                                                       horarioAtencionController
                                                           .text,
-                                                  fotoUrl:
-                                                      fotoUrlController.text,
+                                                  // fotoUrl:
+                                                  //     fotoUrlController.text,
                                                   fechaNacimiento:
                                                       DateTime.tryParse(
-                                                          fechaNacimientoController
-                                                              .text),
+                                                          fechaNacCtrl.text),
                                                   sexo: sexoSeleccionado,
                                                   idEspecialidad: int.tryParse(
                                                           idEspecialidadController
@@ -477,7 +510,6 @@ class _ListMedicosScreenState extends State<ListMedicosScreen> {
                                                               .text) ??
                                                       0,
                                                 );
-
                                                 MedicosController
                                                         .actualizarMedico(
                                                             medicoModificado)
@@ -537,24 +569,25 @@ class _ListMedicosScreenState extends State<ListMedicosScreen> {
   }
 }
 
-Row materialButtonsDoctor(BuildContext context) {
+Row materialButtonsDoctor(
+    BuildContext context, void Function(BuildContext) onAgregarMedico) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceAround,
     children: [
       MaterialButton(
         onPressed: () {
-          // mostrarFormularioRegistro(context);
+          onAgregarMedico(context);
         },
         color: Colors.green,
-        child: const Text('Agregar Doctor',
+        child: const Text('Agregar Medico',
             style: TextStyle(color: Colors.white, fontSize: 18)),
       ),
-      MaterialButton(
-        onPressed: () {},
-        color: Colors.blue,
-        child: const Text('Imprimir Lista',
-            style: TextStyle(color: Colors.white, fontSize: 18)),
-      ),
+      // MaterialButton(
+      //   onPressed: () {},
+      //   color: Colors.blue,
+      //   child: const Text('Imprimir Lista',
+      //       style: TextStyle(color: Colors.white, fontSize: 18)),
+      // ),
     ],
   );
 }

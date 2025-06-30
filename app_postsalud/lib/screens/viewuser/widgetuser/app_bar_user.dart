@@ -5,8 +5,10 @@ import 'package:app_postsalud/widgets/reusable_popup_menu_item_app_bar.dart';
 class AppBarUser extends StatelessWidget implements PreferredSizeWidget {
   final String userName;
   final String title;
+  final int? idPosta;
 
-  const AppBarUser({super.key, required this.userName, required this.title});
+  const AppBarUser(
+      {super.key, required this.userName, required this.title, this.idPosta});
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +30,11 @@ class AppBarUser extends StatelessWidget implements PreferredSizeWidget {
           },
         ),
         ReusablePopupMenuItem(
-          icon: Icons.calendar_today,
-          text: 'Citas',
-          onTap: () {
-            Navigator.pushReplacementNamed(context, 'miscitas');
-          },
-        ),
+            icon: Icons.calendar_today,
+            text: 'Citas',
+            onTap: () {
+              Navigator.pushReplacementNamed(context, 'miscitas');
+            }),
         ReusablePopupMenuItem(
           icon: Icons.logout,
           text: 'Cerrar Sesión',

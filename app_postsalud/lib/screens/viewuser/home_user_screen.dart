@@ -15,28 +15,31 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String userName = 'Paciente'; // Valor por defecto
   UsuariosEntity? usuarioPaciente;
+  int? idUsuario;
+
   @override
   void initState() {
     super.initState();
     cargarUsuarioPaciente(); // Llamar la función al iniciar
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      idUsuario = ModalRoute.of(context)!.settings.arguments as int;
+    });
   }
 
   void cargarUsuarioPaciente() async {
-    List<UsuariosEntity> usuarios =
-        await UsuariosController.obtenerUsuariosPaciente();
-    if (usuarios.isNotEmpty) {
-      setState(() {
-        usuarioPaciente =
-            usuarios.first; // Tomar el primer usuario con idRol == 1
-        userName = usuarioPaciente!.nombres; // Actualizar userName
-      });
+    UsuariosEntity? usuario =
+        await UsuariosController.obtenerUsuarioPacienteId(idUsuario!);
+    if (usuario != null) {
+      // úsalo directamente
+      userName = usuario.nombres;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarUser(userName: userName, title: 'Home Paciente'),
+      appBar: AppBarUser(
+          userName: userName, title: 'Home Paciente, id: $idUsuario'),
       body: SafeArea(
         child: Container(
           color: Color.fromRGBO(218, 255, 249, 1),

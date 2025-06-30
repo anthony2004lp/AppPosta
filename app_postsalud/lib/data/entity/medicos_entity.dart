@@ -40,24 +40,24 @@ class MedicosEntity {
       idMedico: map['id_medico'] != null
           ? int.tryParse(map['id_medico'].toString())
           : null,
-      apellidos: map['apellidos'],
-      nombres: map['nombres'],
-      dni: map['dni'],
-      correo: map['correo'],
-      telefono: map['telefono'],
-      direccionPersonal: map['direccion_personal'],
+      apellidos: map['apellidos'] ?? '',
+      nombres: map['nombres'] ?? '',
+      dni: map['dni'] ?? '',
+      correo: map['correo'] ?? '',
+      telefono: map['telefono'] ?? '',
+      direccionPersonal: map['direccion_personal'] ?? '',
       fechaNacimiento: map['fecha_nacimiento'] != null
-          ? DateTime.tryParse(map['fecha_nacimiento'].toString())
+          ? DateTime.parse(map['fecha_nacimiento'].toString()).toLocal()
           : null,
-      sexo: map['sexo'],
+      sexo: map['sexo'] ?? '',
       idEspecialidad: map['id_especialidad'] != null
           ? int.tryParse(map['id_especialidad'].toString())
           : null,
-      direccionConsultorio: map['direccion_consultorio'],
-      ciudad: map['ciudad'],
-      region: map['region'],
-      horarioAtencion: map['horario_atencion'],
-      fotoUrl: map['foto_url'],
+      direccionConsultorio: map['direccion_consultorio'] ?? '',
+      ciudad: map['ciudad'] ?? '',
+      region: map['region'] ?? '',
+      horarioAtencion: map['horario_atencion'] ?? '',
+      fotoUrl: map['foto_url'] ?? '',
       idPosta: map['id_posta'] != null
           ? int.tryParse(map['id_posta'].toString())
           : null,

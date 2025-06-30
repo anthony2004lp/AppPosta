@@ -12,23 +12,26 @@ class HomeDoctorScreen extends StatefulWidget {
 }
 
 class _HomeDoctorScreenState extends State<HomeDoctorScreen> {
-  String userName = 'Medico'; // Valor por defecto
+  String userName = 'Médico';
   UsuariosEntity? usuarioMedico;
+  int? idUsuario;
 
   @override
   void initState() {
     super.initState();
-    cargarUsuarioDoctor(); // Llamar la función al iniciar
+
+    // Esperar que el contexto esté disponible
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      idUsuario = ModalRoute.of(context)!.settings.arguments as int;
+      cargarNombreMedico();
+    });
   }
 
-  void cargarUsuarioDoctor() async {
-    List<UsuariosEntity> usuarios =
-        await UsuariosController.obtenerUsuariosMedico();
-    if (usuarios.isNotEmpty) {
+  void cargarNombreMedico() async {
+    final nombre = await UsuariosController.obtenerNombreMedico();
+    if (nombre != null) {
       setState(() {
-        usuarioMedico =
-            usuarios.first; // Tomar el primer usuario con idRol == 1
-        userName = usuarioMedico!.nombres; // Actualizar userName
+        userName = nombre;
       });
     }
   }
@@ -36,24 +39,28 @@ class _HomeDoctorScreenState extends State<HomeDoctorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarDoctor(userName: userName, title: 'Home Doctor'),
+      appBar: AppBarDoctor(
+        userName: userName,
+        title: 'Home Doctor, ID: $idUsuario',
+      ),
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.all(10),
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Color.fromRGBO(218, 255, 249, 1),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: const Text(
-                  'Bienvenido, \nMedico General',
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'Bienvenido, \nMédico General',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
                 ),
               ),
               const SizedBox(height: 40),
@@ -63,26 +70,79 @@ class _HomeDoctorScreenState extends State<HomeDoctorScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     CustomButton(
-                      onPressed: () {
-                        Navigator.pushReplacementNamed(context, 'mispacientes');
+                      onPressed: () async {
+                        try {
+                          if (idUsuario != null) {
+                            Navigator.pushReplacementNamed(
+                              context,
+                              'mispacientes',
+                              arguments: idUsuario,
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'No se pudo obtener ID del usuario')),
+                            );
+                          }
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text('Error al abrir "Mis Pacientes": $e')),
+                          );
+                        }
                       },
-                      imagePath:
-                          'assets/img/fondoLogin.png', // Imagen modificada
-                      text: 'Mis\nPacientes', // Texto modificado
+                      imagePath: 'assets/img/fondoLogin.png',
+                      text: 'Mis\nPacientes',
                     ),
-                    SizedBox(height: 20), // Espacio entre botones
+                    const SizedBox(height: 20),
                     CustomButton(
-                      onPressed: () {},
-                      imagePath:
-                          'assets/img/fondoLogin.png', // Imagen modificada
-                      text: 'Mis citas', // Texto modificado
+                      onPressed: () async {
+                        try {
+                          if (idUsuario != null) {
+                            Navigator.pushReplacementNamed(
+                              context,
+                              'miscitasdoctor',
+                              arguments: idUsuario,
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'No se pudo obtener ID del usuario')),
+                            );
+                          }
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text('Error al abrir "Mis Citas": $e')),
+                          );
+                        }
+                      },
+                      imagePath: 'assets/img/fondoLogin.png',
+                      text: 'Mis citas',
                     ),
-                    SizedBox(height: 20), // Espacio entre botones
+                    const SizedBox(height: 20),
                     CustomButton(
-                      onPressed: () {},
-                      imagePath:
-                          'assets/img/fondoLogin.png', // Imagen modificada
-                      text: 'Notas\nMédicas', // Texto modificado
+                      onPressed: () async {
+                        try {
+                          // Navegación futura aquí
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Funcionalidad en desarrollo')),
+                          );
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text('Error al abrir "Notas Médicas": $e')),
+                          );
+                        }
+                      },
+                      imagePath: 'assets/img/fondoLogin.png',
+                      text: 'Notas\nMédicas',
                     ),
                   ],
                 ),

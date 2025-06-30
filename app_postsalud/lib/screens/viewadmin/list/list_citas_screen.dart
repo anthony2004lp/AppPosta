@@ -38,21 +38,12 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
 
   void mostrarFormularioRegistroCita(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
-
-    final TextEditingController idUsuarioController = TextEditingController();
     final TextEditingController idMedicoController = TextEditingController();
     final TextEditingController idEspecialidadController =
         TextEditingController();
     final TextEditingController fechaController = TextEditingController();
     final TextEditingController horaController = TextEditingController();
     final TextEditingController tipoCitaController = TextEditingController();
-    final TextEditingController motivoController = TextEditingController();
-    final TextEditingController observacionesController =
-        TextEditingController();
-    final TextEditingController fechaReprogramadaController =
-        TextEditingController();
-    final TextEditingController horaReprogramadaController =
-        TextEditingController();
     String estadoController = 'pendiente'; // Estado por defecto
 
     showDialog(
@@ -66,8 +57,6 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildTextField(idUsuarioController, 'ID Usuario',
-                      keyboardType: TextInputType.number),
                   _buildTextField(idMedicoController, 'ID Médico',
                       keyboardType: TextInputType.number),
                   _buildTextField(idEspecialidadController, 'ID Especialidad',
@@ -86,14 +75,6 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
                     onChanged: (value) => estadoController = value.toString(),
                     decoration: const InputDecoration(labelText: 'Estado'),
                   ),
-                  _buildTextField(motivoController, 'Motivo'),
-                  _buildTextField(observacionesController, 'Observaciones'),
-                  _buildTextField(fechaReprogramadaController,
-                      'Fecha Reprogramada (YYYY-MM-DD)',
-                      keyboardType: TextInputType.datetime),
-                  _buildTextField(
-                      horaReprogramadaController, 'Hora Reprogramada (HH:mm)',
-                      keyboardType: TextInputType.datetime),
                 ],
               ),
             ),
@@ -107,9 +88,7 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   CitasEntity nuevaCita = CitasEntity(
-                    idcita:
-                        0, // Se genera automáticamente en la BD si es AUTO_INCREMENT
-                    idusuario: int.tryParse(idUsuarioController.text) ?? 0,
+                    idcita: 0,
                     idmedico: int.tryParse(idMedicoController.text) ?? 0,
                     idespecialidad:
                         int.tryParse(idEspecialidadController.text) ?? 0,
@@ -123,19 +102,6 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
                     ),
                     tipocita: tipoCitaController.text,
                     estado: estadoController,
-                    motivo: motivoController.text,
-                    observaciones: observacionesController.text,
-                    fechareprogramada:
-                        DateTime.tryParse(fechaReprogramadaController.text) ??
-                            DateTime.now(),
-                    horareprogramada: TimeOfDay(
-                      hour: int.tryParse(
-                              horaReprogramadaController.text.split(':')[0]) ??
-                          0,
-                      minute: int.tryParse(
-                              horaReprogramadaController.text.split(':')[1]) ??
-                          0,
-                    ),
                   );
 
                   CitasController.agregarCita(context, nuevaCita, () {
@@ -177,6 +143,24 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
           return null;
         },
       ),
+    );
+  }
+
+  Widget _buildPickerField({
+    required TextEditingController controller,
+    required String label,
+    required VoidCallback onTap,
+    TextInputType keyboardType = TextInputType.datetime,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+        suffixIcon: const Icon(Icons.calendar_today),
+      ),
+      readOnly: true,
+      onTap: onTap,
     );
   }
 
@@ -248,41 +232,61 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
                               children: [
                                 ElevatedButton.icon(
                                   onPressed: () {
+                                    final idMedicoController =
+                                        TextEditingController(
+                                      text: citas[index].idmedico?.toString() ??
+                                          '',
+                                    );
+                                    final idEspecialidadController =
+                                        TextEditingController(
+                                      text: citas[index]
+                                              .idespecialidad
+                                              ?.toString() ??
+                                          '',
+                                    );
+                                    // Fecha cita en YYYY-MM-DD
                                     final fechaController =
                                         TextEditingController(
-                                            text: citas[index]
-                                                .fecha
-                                                ?.toLocal()
-                                                .toString()
-                                                .split('T')
-                                                .first);
+                                      text: citas[index].fecha != null
+                                          ? DateFormat('yyyy-MM-dd').format(
+                                              citas[index].fecha!.toLocal())
+                                          : '',
+                                    );
+                                    // Hora cita en HH:mm (24 h)
                                     final horaController =
                                         TextEditingController(
-                                            text: citas[index]
-                                                .hora
-                                                ?.format(context));
+                                      text: citas[index].hora != null
+                                          ? '${citas[index].hora!.hour.toString().padLeft(2, '0')}:'
+                                              '${citas[index].hora!.minute.toString().padLeft(2, '0')}'
+                                          : '',
+                                    );
+                                    // Tipo de cita
                                     final tipoCitaController =
                                         TextEditingController(
-                                            text: citas[index].tipocita);
-                                    final motivoController =
-                                        TextEditingController(
-                                            text: citas[index].motivo);
-                                    final observacionesController =
-                                        TextEditingController(
-                                            text: citas[index].observaciones);
+                                      text: citas[index].tipocita ?? '',
+                                    );
+                                    // Fecha reprogramada en YYYY-MM-DD (puede ser null)
                                     final fechaReprogramadaController =
                                         TextEditingController(
-                                            text: citas[index]
-                                                .fechareprogramada
-                                                ?.toLocal()
-                                                .toString()
-                                                .split('T')
-                                                .first);
+                                      text:
+                                          citas[index].fechareprogramada != null
+                                              ? DateFormat('yyyy-MM-dd').format(
+                                                  citas[index]
+                                                      .fechareprogramada!
+                                                      .toLocal())
+                                              : '',
+                                    );
+                                    // Hora reprogramada en HH:mm (24 h, puede ser null)
                                     final horaReprogramadaController =
                                         TextEditingController(
-                                            text:
-                                                '${citas[index].horareprogramada?.hour.toString().padLeft(2, '0')}:${citas[index].horareprogramada?.minute.toString().padLeft(2, '0')}');
-                                    String estadoSeleccionado =
+                                      text: citas[index].horareprogramada !=
+                                              null
+                                          ? '${citas[index].horareprogramada!.hour.toString().padLeft(2, '0')}:'
+                                              '${citas[index].horareprogramada!.minute.toString().padLeft(2, '0')}'
+                                          : '',
+                                    );
+
+                                    String? estadoSeleccionado =
                                         citas[index].estado;
                                     showDialog(
                                         context: context,
@@ -295,29 +299,77 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
                                                         MainAxisSize.min,
                                                     children: [
                                                       _buildTextField(
-                                                          TextEditingController(
-                                                            text: citas[index]
-                                                                .fecha
-                                                                ?.toLocal()
-                                                                .toString()
-                                                                .split('T')
-                                                                .first,
-                                                          ),
-                                                          'Fecha (YYYY-MM-DD)',
+                                                          idMedicoController,
+                                                          'ID Médico',
                                                           keyboardType:
                                                               TextInputType
-                                                                  .datetime),
+                                                                  .number),
                                                       _buildTextField(
-                                                          TextEditingController(
-                                                            text: citas[index]
-                                                                .hora
-                                                                ?.format(
-                                                                    context),
-                                                          ),
-                                                          'Hora (HH:mm)',
+                                                          idEspecialidadController,
+                                                          'ID Especialidad',
                                                           keyboardType:
                                                               TextInputType
-                                                                  .datetime),
+                                                                  .number),
+                                                      _buildPickerField(
+                                                          controller:
+                                                              fechaController,
+                                                          label:
+                                                              'Fecha (YYYY-MM-DD)',
+                                                          onTap: () async {
+                                                            final picked =
+                                                                await showDatePicker(
+                                                              context: context,
+                                                              initialDate: citas[
+                                                                          index]
+                                                                      .fecha ??
+                                                                  DateTime
+                                                                      .now(),
+                                                              firstDate: DateTime
+                                                                      .now()
+                                                                  .subtract(
+                                                                      const Duration(
+                                                                          days:
+                                                                              365)),
+                                                              lastDate: DateTime
+                                                                      .now()
+                                                                  .add(const Duration(
+                                                                      days:
+                                                                          365)),
+                                                            );
+                                                            if (picked !=
+                                                                null) {
+                                                              fechaController
+                                                                  .text = DateFormat(
+                                                                      'yyyy-MM-dd')
+                                                                  .format(
+                                                                      picked);
+                                                            }
+                                                          }),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      _buildPickerField(
+                                                          controller:
+                                                              horaController,
+                                                          label: 'Hora (HH:mm)',
+                                                          onTap: () async {
+                                                            final picked =
+                                                                await showTimePicker(
+                                                              context: context,
+                                                              initialTime: citas[
+                                                                          index]
+                                                                      .hora ??
+                                                                  TimeOfDay
+                                                                      .now(),
+                                                            );
+                                                            if (picked !=
+                                                                null) {
+                                                              horaController
+                                                                      .text =
+                                                                  picked.format(
+                                                                      context);
+                                                            }
+                                                          }),
                                                       _buildTextField(
                                                           TextEditingController(
                                                             text: citas[index]
@@ -327,23 +379,14 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
                                                       _buildTextField(
                                                           TextEditingController(
                                                             text: citas[index]
-                                                                .motivo,
-                                                          ),
-                                                          'Motivo'),
-                                                      _buildTextField(
-                                                          TextEditingController(
-                                                            text: citas[index]
-                                                                .observaciones,
-                                                          ),
-                                                          'Observaciones'),
-                                                      _buildTextField(
-                                                          TextEditingController(
-                                                            text: citas[index]
-                                                                .fechareprogramada
-                                                                ?.toLocal()
-                                                                .toString()
-                                                                .split('T')
-                                                                .first,
+                                                                        .fechareprogramada !=
+                                                                    null
+                                                                ? DateFormat(
+                                                                        'yyyy-MM-dd')
+                                                                    .format(citas[
+                                                                            index]
+                                                                        .fechareprogramada!)
+                                                                : '',
                                                           ),
                                                           'Fecha Reprogramada (YYYY-MM-DD)',
                                                           keyboardType:
@@ -397,58 +440,89 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
                                                       Navigator.pop(context),
                                                   child: const Text('Cancelar'),
                                                 ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      citas[index].fecha =
-                                                          DateTime.parse(
-                                                              fechaController
-                                                                  .text);
-                                                      final horaPartes =
-                                                          horaController.text
-                                                              .trim()
-                                                              .split(':');
-                                                      citas[index].hora =
-                                                          TimeOfDay(
-                                                        hour: int.parse(
-                                                            horaPartes[0]),
-                                                        minute: int.parse(
-                                                            horaPartes[1]),
-                                                      );
+                                                ElevatedButton(
+                                                  onPressed: () async {
+                                                    // 1) Lee y asigna en tu objeto cita
+                                                    citas[index].idmedico =
+                                                        int.parse(
+                                                            idMedicoController
+                                                                .text);
+                                                    citas[index]
+                                                            .idespecialidad =
+                                                        int.parse(
+                                                            idEspecialidadController
+                                                                .text);
+                                                    citas[index].fecha =
+                                                        DateTime.parse(
+                                                            fechaController
+                                                                .text);
+                                                    final partsHora =
+                                                        horaController.text
+                                                            .split(':');
+                                                    citas[index].hora =
+                                                        TimeOfDay(
+                                                      hour: int.parse(
+                                                          partsHora[0]),
+                                                      minute: int.parse(
+                                                          partsHora[1]),
+                                                    );
+                                                    citas[index].tipocita =
+                                                        tipoCitaController.text;
+                                                    citas[index]
+                                                            .fechareprogramada =
+                                                        fechaReprogramadaController
+                                                                .text.isEmpty
+                                                            ? null
+                                                            : DateTime.parse(
+                                                                fechaReprogramadaController
+                                                                    .text);
+                                                    citas[index]
+                                                            .horareprogramada =
+                                                        horaReprogramadaController
+                                                                .text.isEmpty
+                                                            ? null
+                                                            : TimeOfDay(
+                                                                hour: int.parse(
+                                                                    horaReprogramadaController
+                                                                        .text
+                                                                        .split(
+                                                                            ':')[0]),
+                                                                minute: int.parse(
+                                                                    horaReprogramadaController
+                                                                        .text
+                                                                        .split(
+                                                                            ':')[1]),
+                                                              );
+                                                    citas[index].estado =
+                                                        estadoSeleccionado;
 
-                                                      citas[index].tipocita =
-                                                          tipoCitaController
-                                                              .text;
-                                                      citas[index].motivo =
-                                                          motivoController.text;
-                                                      citas[index]
-                                                              .observaciones =
-                                                          observacionesController
-                                                              .text;
-                                                      citas[index]
-                                                              .fechareprogramada =
-                                                          DateTime.parse(
-                                                              fechaReprogramadaController
-                                                                  .text);
-                                                      final horaRepPartes =
-                                                          horaReprogramadaController
-                                                              .text
-                                                              .split(':');
-                                                      citas[index]
-                                                              .horareprogramada =
-                                                          TimeOfDay(
-                                                              hour: int.parse(
-                                                                  horaRepPartes[
-                                                                      0]),
-                                                              minute: int.parse(
-                                                                  horaRepPartes[
-                                                                      1]));
-                                                      citas[index].estado =
-                                                          estadoSeleccionado;
-                                                    });
+                                                    // 2) Llama al controller
+                                                    final ok = await CitasController
+                                                        .actualizarCitaDetalles(
+                                                            citas[index]);
 
-                                                    Navigator.pop(
-                                                        context); // Cierra el diálogo solo después de actualizar
+                                                    // 3) Cierra diálogo y notifica
+                                                    Navigator.pop(context);
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      SnackBar(
+                                                        content: Text(
+                                                          ok
+                                                              ? 'Cita actualizada correctamente'
+                                                              : 'Error al actualizar cita',
+                                                        ),
+                                                      ),
+                                                    );
+
+                                                    // 4) Si salió todo OK, refresca la lista
+                                                    if (ok && mounted) {
+                                                      setState(() {
+                                                        _citasFuture =
+                                                            CitasController
+                                                                .obtenerCitas();
+                                                      });
+                                                    }
                                                   },
                                                   child: const Text('Guardar'),
                                                 ),
@@ -463,7 +537,7 @@ class _ListCitasScreenState extends State<ListCitasScreen> {
                                 ElevatedButton.icon(
                                   onPressed: () {
                                     CitasController.eliminarCita(
-                                        context, c.idcita, () {
+                                        context, c.idcita!, () {
                                       setState(() {
                                         _citasFuture = CitasController
                                             .obtenerCitas(); // Recargar lista de citas
@@ -502,13 +576,7 @@ Row materialButtonsCitas(
           onAgregarCita(context);
         },
         color: Colors.green,
-        child: const Text('Agregar Doctor',
-            style: TextStyle(color: Colors.white, fontSize: 18)),
-      ),
-      MaterialButton(
-        onPressed: () {},
-        color: Colors.blue,
-        child: const Text('Imprimir Lista',
+        child: const Text('Agregar Cita',
             style: TextStyle(color: Colors.white, fontSize: 18)),
       ),
     ],

@@ -18,21 +18,24 @@ class AppBarDoctor extends StatelessWidget implements PreferredSizeWidget {
           icon: Icons.person,
           text: 'Home',
           onTap: () {
-            Navigator.pushReplacementNamed(context, 'homedoctor');
+            Navigator.pushReplacementNamed(context, 'homedoctor',
+                arguments: ModalRoute.of(context)!.settings.arguments as int?);
           },
         ),
         ReusablePopupMenuItem(
           icon: Icons.person,
           text: 'Mi Perfil',
           onTap: () {
-            Navigator.pushReplacementNamed(context, 'myperfildoctor');
+            Navigator.pushReplacementNamed(context, 'myperfildoctor',
+                arguments: ModalRoute.of(context)!.settings.arguments as int?);
           },
         ),
         ReusablePopupMenuItem(
           icon: Icons.calendar_today,
           text: 'Citas',
           onTap: () {
-            Navigator.pushReplacementNamed(context, 'citasDoctor');
+            Navigator.pushReplacementNamed(context, 'miscitasdoctor',
+                arguments: ModalRoute.of(context)!.settings.arguments as int?);
           },
         ),
         ReusablePopupMenuItem(

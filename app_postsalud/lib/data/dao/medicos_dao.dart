@@ -18,28 +18,26 @@ class MedicosDao {
     var conn = await DatabaseService.connect();
 
     await conn.execute(
-      "INSERT INTO medicos (apellidos, nombres, dni, correo, telefono, direccion_personal, fecha_nacimiento, sexo, id_especialidad, direccion_consultorio, ciudad, region, horario_atencion, foto_url, id_posta) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-      [
-        medico.apellidos,
-        medico.nombres,
-        medico.dni,
-        medico.correo,
-        medico.telefono,
-        medico.direccionPersonal,
-        medico.fechaNacimiento
-            ?.toLocal()
-            .toIso8601String()
-            .split('T')[0], // Formato correcto para DATE
-        medico.sexo,
-        medico.idEspecialidad,
-        medico.direccionConsultorio,
-        medico.ciudad,
-        medico.region,
-        medico.horarioAtencion,
-        medico.fotoUrl,
-        medico.idPosta,
-      ] as Map<String, dynamic>?,
-    );
+        '''INSERT INTO medicos 
+      (apellidos, nombres, dni, correo, telefono, direccion_personal, fecha_nacimiento, sexo, id_especialidad, direccion_consultorio, ciudad, region, horario_atencion, id_posta)
+       VALUES (:apellidos,:nombres,:dni,:correo,:telefono,:direccion_personal,:fecha_nacimiento,:sexo,:id_especialidad,:direccion_consultorio,:ciudad,:region,:horario_atencion,:id_posta)''',
+        {
+          'apellidos': medico.apellidos,
+          'nombres': medico.nombres,
+          'dni': medico.dni,
+          'correo': medico.correo,
+          'telefono': medico.telefono,
+          'direccion_personal': medico.direccionPersonal,
+          'fecha_nacimiento':
+              medico.fechaNacimiento?.toIso8601String().split('T').first,
+          'sexo': medico.sexo,
+          'id_especialidad': medico.idEspecialidad,
+          'direccion_consultorio': medico.direccionConsultorio,
+          'ciudad': medico.ciudad,
+          'region': medico.region,
+          'horario_atencion': medico.horarioAtencion,
+          'id_posta': medico.idPosta
+        });
   }
 
   static Future<List<MedicosEntity>> obtenerMedicosPorPosta(int idPosta) async {
@@ -57,7 +55,7 @@ class MedicosDao {
     var conn = await DatabaseService.connect();
 
     await conn.execute(
-        "UPDATE medicos SET apellidos=  :apellidos, nombres= :nombres, dni= :dni , correo= :correo, telefono= :telefono, direccion_personal= :direccion_personal, fecha_nacimiento= :fecha_nacimiento, sexo= :sexo, id_especialidad= :id_especialidad, direccion_consultorio= :direccion_consultorio, ciudad= :ciudad, region= :region, horario_atencion= :horario_atencion, foto_url= :foto_url, id_posta= :id_posta WHERE id_medico= :id_medico",
+        "UPDATE medicos SET apellidos=  :apellidos, nombres= :nombres, dni= :dni , correo= :correo, telefono= :telefono, direccion_personal= :direccion_personal, fecha_nacimiento= :fecha_nacimiento, sexo= :sexo, id_especialidad= :id_especialidad, direccion_consultorio= :direccion_consultorio, ciudad= :ciudad, region= :region, horario_atencion= :horario_atencion, id_posta= :id_posta WHERE id_medico= :id_medico",
         {
           'apellidos': medico.apellidos,
           'nombres': medico.nombres,
@@ -66,17 +64,31 @@ class MedicosDao {
           'telefono': medico.telefono,
           'direccion_personal': medico.direccionPersonal,
           'fecha_nacimiento':
-              medico.fechaNacimiento?.toLocal().toIso8601String().split('T')[0],
+              medico.fechaNacimiento?.toIso8601String().split('T').first ?? '',
+
           'sexo': medico.sexo,
           'id_especialidad': medico.idEspecialidad,
           'direccion_consultorio': medico.direccionConsultorio,
           'ciudad': medico.ciudad,
           'region': medico.region,
           'horario_atencion': medico.horarioAtencion,
-          'foto_url': medico.fotoUrl,
+          // 'foto_url': medico.fotoUrl,
           'id_posta': medico.idPosta,
           'id_medico': medico.idMedico
         });
+  }
+
+  static Future<MedicosEntity?> getMedicoPorUsuario(int idUsuario) async {
+    final conn = await DatabaseService.connect();
+    final result = await conn.execute(
+      'SELECT * FROM medicos WHERE id_usuario = :id',
+      {'id': idUsuario},
+    );
+    await conn.close();
+    if (result.isNotEmpty) {
+      return MedicosEntity.fromMap(result.rows.first.assoc());
+    }
+    return null;
   }
 
   static Future<MedicosEntity> searchNameMedico(MedicosEntity medico) async {

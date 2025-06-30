@@ -1,9 +1,9 @@
+import 'package:app_postsalud/data/controllers/postas_medicas_controller.dart';
 import 'package:app_postsalud/data/controllers/usuarios_controller.dart';
 import 'package:app_postsalud/data/dao/citas_dao.dart';
 import 'package:app_postsalud/data/dao/especialidades_dao.dart';
 import 'package:app_postsalud/data/entity/citas_entity.dart';
 import 'package:app_postsalud/data/entity/usuarios_entity.dart';
-import 'package:app_postsalud/screens/viewadmin/widgetadmin/app_bar_admin.dart';
 import 'package:app_postsalud/screens/viewuser/widgetuser/app_bar_user.dart';
 import 'package:flutter/material.dart';
 
@@ -15,31 +15,42 @@ class MyCitasScreen extends StatefulWidget {
 }
 
 class _MyCitasScreenState extends State<MyCitasScreen> {
+  late int idUsuario;
   Future<List<CitasEntity>> _futureCitas = Future.value([]);
-  String userName = 'Paciente'; // Valor por defecto
+  String userName = 'Paciente';
   UsuariosEntity? usuarioPaciente;
   Map<int, String> especialidadesMap = {};
+  String nombrePosta = '';
 
   @override
   void initState() {
     super.initState();
-    cargarEspecialidadesYCitas();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      idUsuario = ModalRoute.of(context)!.settings.arguments as int;
+      cargarEspecialidadesYCitas(idUsuario);
+    });
   }
 
-  void cargarEspecialidadesYCitas() async {
+  void cargarEspecialidadesYCitas(int idUsuario) async {
     final lista = await EspecialidadDao.getEspecialidades();
-    final usuarios = await UsuariosController.obtenerUsuariosPaciente();
+    final posta = await PostasMedicasController.obtenerPostaMedicaPorId(1);
+    UsuariosEntity? user =
+        await UsuariosController.obtenerUsuarioPacienteId(idUsuario);
+    if (user != null) {
+      // úsalo directamente
+      userName = user.nombres;
+    }
 
-    if (usuarios.isNotEmpty) {
-      final user = usuarios.first;
+    setState(() {
+      especialidadesMap = {
+        for (var esp in lista) esp.idEspecialidad!: esp.nombre,
+      };
+      _futureCitas = CitasDao.getCitasPorUsuario(user?.idUsuario ?? 0);
+    });
 
+    if (posta != null) {
       setState(() {
-        usuarioPaciente = user;
-        userName = user.nombres;
-        especialidadesMap = {
-          for (var esp in lista) esp.idEspecialidad!: esp.nombre
-        };
-        _futureCitas = CitasDao.getCitasPorUsuario(user.idUsuario!);
+        nombrePosta = posta.nombre ?? 'Posta Médica';
       });
     }
   }
@@ -73,8 +84,6 @@ class _MyCitasScreenState extends State<MyCitasScreen> {
                 DataColumn(label: Text('Fecha')),
                 DataColumn(label: Text('Hora')),
                 DataColumn(label: Text('Médico')),
-                // DataColumn(label: Text('Especialidad')),
-                // DataColumn(label: Text('Estado')),
               ],
               rows: citas.map((cita) {
                 return DataRow(
@@ -82,8 +91,8 @@ class _MyCitasScreenState extends State<MyCitasScreen> {
                     showModalBottomSheet(
                       context: context,
                       builder: (context) => Padding(
-                        padding: const EdgeInsets.only(
-                            left: 25, right: 16, top: 16, bottom: 25),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 25),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,21 +100,22 @@ class _MyCitasScreenState extends State<MyCitasScreen> {
                             Text('Detalle de cita',
                                 style: Theme.of(context).textTheme.titleLarge),
                             const Divider(),
+                            Text('Posta Médica: $nombrePosta',
+                                style: const TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold)),
                             Text(
                                 'Fecha: ${cita.fecha!.toLocal().toIso8601String().split("T").first}'),
                             Text(
                                 'Hora: ${cita.hora!.hour.toString().padLeft(2, '0')}:${cita.hora!.minute.toString().padLeft(2, '0')}'),
                             Text('Médico ID: ${cita.idmedico}'),
                             Text(
-                              'ID ${cita.idespecialidad} - Especialidad: ${especialidadesMap[cita.idespecialidad] ?? 'Desconocida'}',
-                            ),
+                                'ID ${cita.idespecialidad} - Especialidad: ${especialidadesMap[cita.idespecialidad] ?? 'Desconocida'}'),
                             Text('Tipo: ${cita.tipocita}'),
                             Text('Estado: ${cita.estado}'),
-                            Text('Motivo: ${cita.motivo ?? '-'}'),
-                            Text('Observaciones: ${cita.observaciones}'),
                             const SizedBox(height: 8),
                             Text(
-                                'Reprogramada para: ${cita.fechareprogramada?.toLocal().toIso8601String().split("T").first ?? '-'} a las ${cita.horareprogramada?.hour.toString().padLeft(2, '0')}:${cita.horareprogramada?.minute.toString().padLeft(2, '0')}'),
+                              'Reprogramada para: ${cita.fechareprogramada?.toLocal().toIso8601String().split("T").first ?? '-'} a las ${cita.horareprogramada?.hour.toString().padLeft(2, '0')}:${cita.horareprogramada?.minute.toString().padLeft(2, '0')}',
+                            ),
                           ],
                         ),
                       ),
@@ -120,8 +130,6 @@ class _MyCitasScreenState extends State<MyCitasScreen> {
                     DataCell(Text(
                         '${cita.hora?.hour}:${cita.hora?.minute.toString().padLeft(2, '0')}')),
                     DataCell(Text('ID ${cita.idmedico}')),
-                    // DataCell(Text('ID ')),
-                    // DataCell(Text('.......')),
                   ],
                 );
               }).toList(),

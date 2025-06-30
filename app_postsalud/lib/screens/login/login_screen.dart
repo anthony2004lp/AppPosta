@@ -199,9 +199,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   MaterialButton buttonIngresar(
-      BuildContext context,
-      TextEditingController dniController,
-      TextEditingController passwordController) {
+    BuildContext context,
+    TextEditingController dniController,
+    TextEditingController passwordController,
+  ) {
     return MaterialButton(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       disabledColor: Colors.amber,
@@ -214,41 +215,77 @@ class _LoginScreenState extends State<LoginScreen> {
 
         if (dni.isEmpty || contrasena.isEmpty) {
           log("Error: Alguno de los campos está vacío.");
+          _mostrarDialogoError(context, "Debes ingresar DNI y contraseña.");
           return;
         }
 
-        UsuariosEntity? usuarios =
-            await UsuariosDao.getUsuariosByCredentials(dni, contrasena);
+        try {
+          final usuarios =
+              await UsuariosDao.getUsuariosByCredentials(dni, contrasena);
 
-        if (usuarios != null) {
-          // Tomamos el primer usuario encontrado
-          log("Usuario encontrado: ${usuarios.nombres}");
-          int idRol = usuarios.idRol;
+          if (usuarios != null) {
+            log("Usuario encontrado: ${usuarios.nombres}");
+            int idRol = usuarios.idRol;
 
-          switch (idRol) {
-            case 1:
-              Navigator.pushReplacementNamed(context, 'homeuser');
-              break;
-            case 2:
-              Navigator.pushReplacementNamed(context, 'homedoctor');
-              break;
-            case 3:
-              Navigator.pushReplacementNamed(context, 'homeadmin');
-              break;
-            default:
-              log("Rol no reconocido: $idRol");
+            switch (idRol) {
+              case 1:
+                Navigator.pushReplacementNamed(
+                  context,
+                  'homeuser',
+                  arguments: usuarios.idUsuario,
+                );
+                break;
+              case 2:
+                Navigator.pushReplacementNamed(
+                  context,
+                  'homedoctor',
+                  arguments: usuarios.idUsuario,
+                );
+                break;
+              case 3:
+                Navigator.pushReplacementNamed(
+                  context,
+                  'homeadmin',
+                  arguments: usuarios.idUsuario,
+                );
+                break;
+              default:
+                log("Rol no reconocido: $idRol");
+                _mostrarDialogoError(context, "Tu rol no está registrado.");
+            }
+          } else {
+            log("Credenciales incorrectas");
+            _mostrarDialogoError(context, "DNI o contraseña incorrectos.");
           }
-        } else {
-          log("Credenciales incorrectas");
+        } catch (e, stackTrace) {
+          log("🔴 Error inesperado en login: $e\n$stackTrace");
+          _mostrarDialogoError(
+              context, "Ha ocurrido un error. Intenta nuevamente.");
         }
       },
-      color: Color.fromRGBO(40, 157, 137, 1),
+      color: const Color.fromRGBO(40, 157, 137, 1),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: const Text(
           'Ingresar',
           style: TextStyle(color: Colors.white, fontSize: 15),
         ),
+      ),
+    );
+  }
+
+  void _mostrarDialogoError(BuildContext context, String mensaje) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Error de autenticación'),
+        content: Text(mensaje),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Aceptar'),
+          ),
+        ],
       ),
     );
   }

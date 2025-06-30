@@ -14,21 +14,22 @@ class MyPerfilUserScreen extends StatefulWidget {
 class _MyPerfilUserScreenState extends State<MyPerfilUserScreen> {
   String userName = 'Administrador'; // Valor por defecto
   UsuariosEntity? usuarioPaciente;
+  late int idUsuario;
 
   void initState() {
     super.initState();
     cargarUsuarioPaciente(); // Llamar la función al iniciar
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      idUsuario = ModalRoute.of(context)!.settings.arguments as int;
+    });
   }
 
   void cargarUsuarioPaciente() async {
-    List<UsuariosEntity> usuarios =
-        await UsuariosController.obtenerUsuariosPaciente();
-    if (usuarios.isNotEmpty) {
-      setState(() {
-        usuarioPaciente =
-            usuarios.first; // Tomar el primer usuario con idRol == 1
-        userName = usuarioPaciente!.nombres; // Actualizar userName
-      });
+    UsuariosEntity? usuario =
+        await UsuariosController.obtenerUsuarioPacienteId(idUsuario);
+    if (usuario != null) {
+      // úsalo directamente
+      userName = usuario.nombres;
     }
   }
 

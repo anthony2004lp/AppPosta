@@ -18,6 +18,7 @@ class _MapUserState extends State<MapUser> {
   String userName = 'Paciente';
   UsuariosEntity? usuarioPaciente;
   PostasMedicasEntity? postaMedica;
+  late int idUsuario;
 
   final _initialPostion = const CameraPosition(
     target: LatLng(-11.953115, -77.070309),
@@ -29,6 +30,9 @@ class _MapUserState extends State<MapUser> {
     super.initState();
     cargarUsuarioPaciente();
     cargarPosta();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      idUsuario = ModalRoute.of(context)!.settings.arguments as int;
+    });
   }
 
   Future<void> cargarPosta() async {
@@ -41,13 +45,11 @@ class _MapUserState extends State<MapUser> {
   }
 
   void cargarUsuarioPaciente() async {
-    List<UsuariosEntity> usuarios =
-        await UsuariosController.obtenerUsuariosPaciente();
-    if (usuarios.isNotEmpty) {
-      setState(() {
-        usuarioPaciente = usuarios.first;
-        userName = usuarioPaciente!.nombres;
-      });
+    UsuariosEntity? usuario =
+        await UsuariosController.obtenerUsuarioMedicoId(idUsuario);
+    if (usuario != null) {
+      // úsalo directamente
+      userName = usuario.nombres;
     }
   }
 

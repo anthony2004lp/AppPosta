@@ -16,19 +16,30 @@ class UsuariosDao {
   }
 
   static Future<UsuariosEntity?> getUsuariosByCredentials(
-      String dni, String contrasena) async {
-    var conn = await DatabaseService.connect();
+    String dni,
+    String contrasena,
+  ) async {
+    var conn;
+    try {
+      conn = await DatabaseService.connect();
+      final result = await conn.execute(
+        'SELECT * FROM usuarios WHERE dni = :dni AND contrasena = :contrasena',
+        {'dni': dni, 'contrasena': contrasena},
+      );
 
-    var result = await conn.execute(
-      "SELECT * FROM usuarios WHERE dni = :dni AND contrasena = :contrasena;",
-      {"dni": dni, "contrasena": contrasena},
-    );
-    // UsuariosEntity usuario;
-    await conn.close();
-    if (result.isNotEmpty) {
-      return UsuariosEntity.fromMap(result.rows.first.assoc());
-    } else {
+      if (result.isNotEmpty) {
+        return UsuariosEntity.fromMap(result.rows.first.assoc());
+      }
       return null;
+    } catch (e, st) {
+      // Loguea el error para debugging
+      print('🔴 Error en getUsuariosByCredentials: $e\n$st');
+      return null;
+    } finally {
+      // Cierra la conexión siempre, incluso si hubo excepción
+      if (conn != null) {
+        await conn.close();
+      }
     }
   }
 
@@ -81,6 +92,20 @@ class UsuariosDao {
     );
 
     await conn.close();
+  }
+
+  // data/dao/usuarios_dao.dart
+  static Future<UsuariosEntity?> getUsuarioPorId(int id) async {
+    final conn = await DatabaseService.connect();
+    final result = await conn.execute(
+      'SELECT * FROM usuarios WHERE id_usuario = :id',
+      {'id': id},
+    );
+    await conn.close();
+    if (result.isNotEmpty) {
+      return UsuariosEntity.fromMap(result.rows.first.assoc());
+    }
+    return null;
   }
 
   // Eliminar un usuario por ID
