@@ -48,12 +48,6 @@ class _ListPacienteHistorialState extends State<ListPacienteHistorial> {
             SizedBox(
               height: 10,
             ),
-            MaterialButton(
-              onPressed: () {},
-              color: Colors.blue,
-              child: const Text('Imprimir Lista',
-                  style: TextStyle(color: Colors.white, fontSize: 18)),
-            ),
             const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(

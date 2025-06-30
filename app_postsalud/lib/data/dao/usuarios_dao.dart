@@ -23,7 +23,7 @@ class UsuariosDao {
     try {
       conn = await DatabaseService.connect();
       final result = await conn.execute(
-        'SELECT * FROM usuarios WHERE dni = :dni AND contrasena = :contrasena',
+        '''SELECT * FROM usuarios WHERE dni = :dni AND contrasena = :contrasena''',
         {'dni': dni, 'contrasena': contrasena},
       );
 
@@ -43,52 +43,69 @@ class UsuariosDao {
     }
   }
 
-  // Insertar un usuario nuevo
   static Future<void> insertUsuario(UsuariosEntity usuario) async {
     var conn = await DatabaseService.connect();
 
     await conn.execute(
-      "INSERT INTO usuarios (nombres, apellidos, dni, telefono, email, contrasena, direccion, fecha_nacimiento, sexo, foto_url, id_rol, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [
-        usuario.nombres,
-        usuario.apellidos,
-        usuario.dni,
-        usuario.telefono,
-        usuario.email,
-        usuario.contrasena,
-        usuario.direccion,
-        usuario.fechaNacimiento?.toIso8601String(),
-        usuario.sexo,
-        usuario.fotoUrl,
-        usuario.idRol,
-        usuario.estado,
-      ] as Map<String, dynamic>?,
+      '''
+    INSERT INTO usuarios 
+      (nombres, apellidos, dni, telefono, email, contrasena, direccion, fecha_nacimiento, sexo, id_rol, estado) 
+    VALUES 
+      (:nombres, :apellidos, :dni, :telefono, :email, :contrasena, :direccion, :fecha_nacimiento, :sexo, :id_rol, :estado)
+    ''',
+      {
+        'nombres': usuario.nombres,
+        'apellidos': usuario.apellidos,
+        'dni': usuario.dni,
+        'telefono': usuario.telefono,
+        'email': usuario.email,
+        'contrasena': usuario.contrasena,
+        'direccion': usuario.direccion,
+        'fecha_nacimiento':
+            usuario.fechaNacimiento?.toIso8601String().split('T').first,
+        'sexo': usuario.sexo,
+        'id_rol': usuario.idRol,
+        'estado': usuario.estado,
+      },
     );
 
     await conn.close();
   }
 
-  // Actualizar un usuario existente
   static Future<void> updateUsuario(UsuariosEntity usuario) async {
-    var conn = await DatabaseService.connect();
+    final conn = await DatabaseService.connect();
 
     await conn.execute(
-      "UPDATE usuarios SET nombres = ?, apellidos = ?, dni = ?, telefono = ?, email = ?, contrasena = ?, direccion = ?, fecha_nacimiento = ?, sexo = ?, foto_url = ?, id_rol = ?, estado = ? WHERE id_usuario = ?",
-      [
-        usuario.nombres,
-        usuario.apellidos,
-        usuario.dni,
-        usuario.telefono,
-        usuario.email,
-        usuario.contrasena,
-        usuario.direccion,
-        usuario.fechaNacimiento?.toIso8601String(),
-        usuario.sexo,
-        usuario.fotoUrl,
-        usuario.idRol,
-        usuario.estado,
-        usuario.idUsuario,
-      ] as Map<String, dynamic>?,
+      '''
+    UPDATE usuarios SET
+      nombres          = :nombres,
+      apellidos        = :apellidos,
+      dni              = :dni,
+      telefono         = :telefono,
+      email            = :email,
+      contrasena       = :contrasena,
+      direccion        = :direccion,
+      fecha_nacimiento = :fecha_nacimiento,
+      sexo             = :sexo,
+      id_rol           = :id_rol,
+      estado           = :estado
+    WHERE id_usuario = :id_usuario
+    ''',
+      {
+        'nombres': usuario.nombres,
+        'apellidos': usuario.apellidos,
+        'dni': usuario.dni,
+        'telefono': usuario.telefono,
+        'email': usuario.email,
+        'contrasena': usuario.contrasena,
+        'direccion': usuario.direccion,
+        'fecha_nacimiento':
+            usuario.fechaNacimiento?.toIso8601String().split('T').first,
+        'sexo': usuario.sexo,
+        'id_rol': usuario.idRol,
+        'estado': usuario.estado,
+        'id_usuario': usuario.idUsuario,
+      },
     );
 
     await conn.close();
@@ -98,7 +115,7 @@ class UsuariosDao {
   static Future<UsuariosEntity?> getUsuarioPorId(int id) async {
     final conn = await DatabaseService.connect();
     final result = await conn.execute(
-      'SELECT * FROM usuarios WHERE id_usuario = :id',
+      '''SELECT * FROM usuarios WHERE id_usuario = :id''',
       {'id': id},
     );
     await conn.close();
@@ -112,8 +129,9 @@ class UsuariosDao {
   static Future<void> deleteUsuario(int idUsuario) async {
     var conn = await DatabaseService.connect();
 
-    await conn.execute("DELETE FROM usuarios WHERE id_usuario = ?",
-        [idUsuario] as Map<String, dynamic>?);
+    await conn.execute(
+        '''DELETE FROM usuarios WHERE id_usuario = :id_usuario''',
+        {'id_usuario': idUsuario});
 
     await conn.close();
   }

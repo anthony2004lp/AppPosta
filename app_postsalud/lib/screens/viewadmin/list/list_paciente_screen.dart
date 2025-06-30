@@ -60,15 +60,6 @@ class _ListPacienteScreenState extends State<ListPacienteScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // ImageField(
-                  //   imageDefault: '',
-                  //   onSelectedImage: (path) {
-                  //     setState(() {
-                  //       fotoUrl =
-                  //           path; // Guardar la ruta de la imagen en fotoUrl
-                  //     });
-                  //   },
-                  // ),
                   _buildTextField(nombresController, 'Nombres'),
                   _buildTextField(apellidosController, 'Apellidos'),
                   _buildTextField(dniController, 'DNI'),
@@ -364,12 +355,6 @@ class _ListPacienteScreenState extends State<ListPacienteScreen> {
           },
           color: Colors.green,
           child: const Text('Agregar Paciente',
-              style: TextStyle(color: Colors.white, fontSize: 18)),
-        ),
-        MaterialButton(
-          onPressed: () {},
-          color: Colors.blue,
-          child: const Text('Imprimir Lista',
               style: TextStyle(color: Colors.white, fontSize: 18)),
         ),
       ],
