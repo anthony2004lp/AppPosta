@@ -9,99 +9,144 @@ class OptionsHome extends StatefulWidget {
 }
 
 class _OptionsHomeState extends State<OptionsHome> {
+  void _showError(Object e) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('¡Ups! Ocurrió un error: $e')));
+  }
+
+  void _openMenu({
+    required Offset position,
+    required List<PopupMenuEntry> items,
+  }) {
+    try {
+      showMenu(
+          context: context,
+          position: RelativeRect.fromLTRB(
+            position.dx,
+            position.dy,
+            position.dx,
+            position.dy,
+          ),
+          items: items);
+    } catch (e) {
+      _showError(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         CustomButton(
-          color: Color.fromRGBO(31, 214, 255, 1),
-          onPressed: () {
-            final RenderBox renderBox = context.findRenderObject() as RenderBox;
-            final Offset offset = renderBox.localToGlobal(Offset.zero);
-            final Size size = renderBox.size;
-            showMenu(
-              context: context,
-              position: RelativeRect.fromLTRB(
-                offset.dx +
-                    size.width * 0.4, // Mueve el menú ligeramente a la derecha
-                offset.dy +
-                    size.height * 0.1, // Baja el menú para centrarlo mejor
-                offset.dx + size.width, // Ajusta la posición derecha del menú
-                offset.dy + size.height,
-              ),
-              items: [
-                PopupMenuItem(
-                  child: Text('Medicos'),
-                  onTap: () {
-                    Navigator.pushReplacementNamed(context, 'listadoctor');
-                  },
-                ),
-                PopupMenuItem(
-                  child: Text('Historial medico'),
-                  onTap: () {
-                    // Acción para Opción 2
-                  },
-                ),
-              ],
-            );
-          },
-          imagePath: 'assets/img/fondoLogin.png',
+          color: const Color.fromRGBO(31, 214, 255, 1),
           text: 'Médicos',
-        ),
-        SizedBox(height: 20), // Espacio entre botones
-        CustomButton(
-          color: Color.fromRGBO(51, 221, 8, 1),
+          imagePath: 'assets/img/fondoLogin.png',
           onPressed: () {
-            // Acción al presionar el botón
-            final RenderBox renderBox = context.findRenderObject() as RenderBox;
-            final Offset offset = renderBox.localToGlobal(Offset.zero);
-            final Size size = renderBox.size;
-            showMenu(
-              context: context,
-              position: RelativeRect.fromLTRB(
-                offset.dx +
-                    size.width * 0.4, // Mueve el menú ligeramente a la derecha
-                offset.dy +
-                    size.height * 0.35, // Baja el menú para centrarlo mejor
-                offset.dx + size.width, // Ajusta la posición derecha del menú
-                offset.dy + size.height,
-              ),
-              items: [
-                PopupMenuItem(
-                  child: Text('Pacientes'),
-                  onTap: () {
-                    // Acción para Opción 1
-                    Navigator.pushNamed(context, 'listPaciente');
-                  },
+            try {
+              final box = context.findRenderObject() as RenderBox;
+              final pos = box.localToGlobal(Offset.zero);
+              _openMenu(
+                position: Offset(
+                  pos.dx + box.size.width * 0.4,
+                  pos.dy + box.size.height * 0.1,
                 ),
-                PopupMenuItem(
-                  child: Text('Historial paciente'),
-                  onTap: () {
-                    Navigator.popAndPushNamed(context, 'listpacientehistorial');
-                  },
-                ),
-              ],
-            );
+                items: [
+                  PopupMenuItem(
+                    child: const Text('Medicos'),
+                    onTap: () {
+                      try {
+                        Navigator.pushReplacementNamed(context, 'listadoctor');
+                      } catch (e) {
+                        _showError(e);
+                      }
+                    },
+                  ),
+                  PopupMenuItem(
+                    child: const Text('Historial medico'),
+                    onTap: () {
+                      try {
+                        // aquí podrías poner tu navegación
+                      } catch (e) {
+                        _showError(e);
+                      }
+                    },
+                  ),
+                ],
+              );
+            } catch (e) {
+              _showError(e);
+            }
           },
-          imagePath: 'assets/img/fondoLogin.png', // Imagen modificada
-          text: 'Pacientes', // Texto modificado
         ),
-        SizedBox(height: 20), // Espacio entre botones
+        const SizedBox(height: 20),
         CustomButton(
-          color: Color.fromRGBO(133, 203, 191, 1),
+          color: const Color.fromRGBO(51, 221, 8, 1),
+          text: 'Pacientes',
+          imagePath: 'assets/img/fondoLogin.png',
           onPressed: () {
-            Navigator.pushReplacementNamed(context, 'listacitas');
+            try {
+              final box = context.findRenderObject() as RenderBox;
+              final pos = box.localToGlobal(Offset.zero);
+              _openMenu(
+                position: Offset(
+                  pos.dx + box.size.width * 0.4,
+                  pos.dy + box.size.height * 0.35,
+                ),
+                items: [
+                  PopupMenuItem(
+                    child: const Text('Pacientes'),
+                    onTap: () {
+                      try {
+                        Navigator.pushNamed(context, 'listPaciente');
+                      } catch (e) {
+                        _showError(e);
+                      }
+                    },
+                  ),
+                  PopupMenuItem(
+                    child: const Text('Historial paciente'),
+                    onTap: () {
+                      try {
+                        Navigator.popAndPushNamed(
+                            context, 'listpacientehistorial');
+                      } catch (e) {
+                        _showError(e);
+                      }
+                    },
+                  ),
+                ],
+              );
+            } catch (e) {
+              _showError(e);
+            }
           },
-          imagePath: 'assets/img/fondoLogin.png', // Imagen modificada
-          text: 'Citas', // Texto modificado
         ),
-        SizedBox(height: 20), // Espacio entre botones
+        const SizedBox(height: 20),
         CustomButton(
-          color: Color.fromRGBO(255, 79, 79, 1),
-          onPressed: () {},
-          imagePath: 'assets/img/fondoLogin.png', // Imagen modificada
-          text: 'Usuarios médicos', // Texto modificado
+          color: const Color.fromRGBO(133, 203, 191, 1),
+          text: 'Citas',
+          imagePath: 'assets/img/fondoLogin.png',
+          onPressed: () {
+            try {
+              Navigator.pushReplacementNamed(context, 'listacitas');
+            } catch (e) {
+              _showError(e);
+            }
+          },
+        ),
+        const SizedBox(height: 20),
+        CustomButton(
+          color: const Color.fromRGBO(255, 79, 79, 1),
+          text: 'Usuarios médicos',
+          imagePath: 'assets/img/fondoLogin.png',
+          onPressed: () {
+            try {
+              // Acción o navegación que corresponda
+            } catch (e) {
+              _showError(e);
+            }
+          },
         ),
       ],
     );
