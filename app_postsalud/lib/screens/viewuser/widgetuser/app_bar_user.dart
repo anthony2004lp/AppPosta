@@ -12,6 +12,8 @@ class AppBarUser extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final idUsuario = ModalRoute.of(context)?.settings.arguments as int?;
+
     return ReusableAppBar(
       userName: userName,
       popupMenuItems: [
@@ -19,21 +21,24 @@ class AppBarUser extends StatelessWidget implements PreferredSizeWidget {
           icon: Icons.home,
           text: 'Inicio',
           onTap: () {
-            Navigator.pushReplacementNamed(context, 'homeuser');
+            Navigator.pushReplacementNamed(context, 'homeuser',
+                arguments: idUsuario);
           },
         ),
         ReusablePopupMenuItem(
           icon: Icons.person,
           text: 'Mi Perfil',
           onTap: () {
-            Navigator.pushReplacementNamed(context, 'myperfiluser');
+            Navigator.pushReplacementNamed(context, 'myperfiluser',
+                arguments: idUsuario);
           },
         ),
         ReusablePopupMenuItem(
             icon: Icons.calendar_today,
             text: 'Citas',
             onTap: () {
-              Navigator.pushReplacementNamed(context, 'miscitas');
+              Navigator.pushReplacementNamed(context, 'miscitas',
+                  arguments: idUsuario);
             }),
         ReusablePopupMenuItem(
           icon: Icons.logout,

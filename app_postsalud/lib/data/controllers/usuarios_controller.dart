@@ -88,7 +88,7 @@ class UsuariosController {
     UsuariosEntity? medico = usuarios.firstWhere(
       (user) => user.idRol == 2,
       orElse: () => UsuariosEntity(
-        nombres: "Administrador", // Valor por defecto si no se encuentra
+        nombres: "Medico", // Valor por defecto si no se encuentra
         apellidos: "",
         dni: "",
         telefono: "",
@@ -97,7 +97,7 @@ class UsuariosController {
         direccion: "",
         sexo: "",
         fotoUrl: "",
-        idRol: 1,
+        idRol: 2,
         estado: "activo",
       ),
     );
@@ -131,7 +131,7 @@ class UsuariosController {
     UsuariosEntity? paciente = usuarios.firstWhere(
       (user) => user.idRol == 1,
       orElse: () => UsuariosEntity(
-        nombres: "Administrador", // Valor por defecto si no se encuentra
+        nombres: "Paciente", // Valor por defecto si no se encuentra
         apellidos: "",
         dni: "",
         telefono: "",

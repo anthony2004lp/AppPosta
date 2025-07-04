@@ -135,19 +135,6 @@ class _OptionsHomeState extends State<OptionsHome> {
             }
           },
         ),
-        const SizedBox(height: 20),
-        CustomButton(
-          color: const Color.fromRGBO(255, 79, 79, 1),
-          text: 'Usuarios médicos',
-          imagePath: 'assets/img/fondoLogin.png',
-          onPressed: () {
-            try {
-              // Acción o navegación que corresponda
-            } catch (e) {
-              _showError(e);
-            }
-          },
-        ),
       ],
     );
   }

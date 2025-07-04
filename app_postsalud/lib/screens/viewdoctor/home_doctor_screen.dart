@@ -15,24 +15,35 @@ class _HomeDoctorScreenState extends State<HomeDoctorScreen> {
   String userName = 'Médico';
   UsuariosEntity? usuarioMedico;
   int? idUsuario;
+  bool _argsLoaded = false;
 
   @override
   void initState() {
     super.initState();
-
+    if (_argsLoaded) return;
+    _argsLoaded = true;
     // Esperar que el contexto esté disponible
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      idUsuario = ModalRoute.of(context)!.settings.arguments as int;
-      cargarNombreMedico();
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args is int) {
+        idUsuario = args;
+        cargarNombreMedico();
+      } else {
+        debugPrint('⚠️ No llegó idUsuario en arguments');
+      }
     });
   }
 
-  void cargarNombreMedico() async {
-    final nombre = await UsuariosController.obtenerNombreMedico();
-    if (nombre != null) {
-      setState(() {
-        userName = nombre;
-      });
+  Future<void> cargarNombreMedico() async {
+    if (idUsuario == null) return;
+    try {
+      final usuario =
+          await UsuariosController.obtenerUsuarioPacienteId(idUsuario!);
+      if (usuario != null) {
+        setState(() => userName = usuario.nombres);
+      }
+    } catch (e) {
+      debugPrint('Error cargando usuario: $e');
     }
   }
 
@@ -93,7 +104,7 @@ class _HomeDoctorScreenState extends State<HomeDoctorScreen> {
                           );
                         }
                       },
-                      imagePath: 'assets/img/fondoLogin.png',
+                      imagePath: 'assets/img/paciente.png',
                       text: 'Mis\nPacientes',
                     ),
                     const SizedBox(height: 20),
@@ -121,7 +132,7 @@ class _HomeDoctorScreenState extends State<HomeDoctorScreen> {
                           );
                         }
                       },
-                      imagePath: 'assets/img/fondoLogin.png',
+                      imagePath: 'assets/img/mis_cita.png',
                       text: 'Mis citas',
                     ),
                     const SizedBox(height: 20),
@@ -141,7 +152,7 @@ class _HomeDoctorScreenState extends State<HomeDoctorScreen> {
                           );
                         }
                       },
-                      imagePath: 'assets/img/fondoLogin.png',
+                      imagePath: 'assets/img/notas_medicas.png',
                       text: 'Notas\nMédicas',
                     ),
                   ],

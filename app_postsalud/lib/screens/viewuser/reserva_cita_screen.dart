@@ -27,37 +27,74 @@ class _ReservaCitaScreenState extends State<ReservaCitaScreen> {
   String sede = '';
   late int idUsuario;
 
+  bool _argsProcessed = false;
+
   @override
   void initState() {
     super.initState();
     cargarEspecialidades();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      idUsuario = ModalRoute.of(context)!.settings.arguments as int;
-    });
-    _citasFuture =
-        Future.value([]); // inicializamos vacío hasta resolver argumentos
-    cargarUsuarioPaciente(); // Llamar la función al iniciar
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final args = ModalRoute.of(context)?.settings.arguments;
-      if (args != null && args is int) {
-        idPosta = args;
-        final posta =
-            await PostasMedicasController.obtenerPostaMedicaPorId(idPosta);
-        if (posta != null) {
-          setState(() {
-            nombrePosta = posta.nombre ?? '';
-            sede = posta.sede ?? '';
-            _citasFuture = CitasController.obtenerCitasPorIdPosta(idPosta);
-          });
-        }
-      } else {
-        setState(() {
-          _citasFuture = CitasController.obtenerCitas(); // ← todas las citas
-          nombrePosta = 'Todas las postas';
-          sede = '-';
-        });
-      }
-    });
+    // Iniciamos con un Future vacío hasta procesar args
+    _citasFuture = Future.value([]);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_argsProcessed) return;
+    _argsProcessed = true;
+
+    // 1) Leemos argumentos una sola vez
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args is int) {
+      // Este int es el idPosta que nos enviaste desde el mapa
+      idPosta = args;
+
+      // 2) Cargamos info de la posta y ajustamos citas
+      _cargarPostaYElegirCitas();
+    } else {
+      // Si no vino ningún idPosta, mostramos "Todas las postas"
+      setState(() {
+        nombrePosta = 'Todas las postas';
+        sede = '-';
+        _citasFuture = CitasController.obtenerCitas();
+      });
+    }
+
+    // 3) Cargar además el usuario logueado (usa otro argumento)
+    //    Asegúrate de que quien navega hacia aquí pase también idUsuario
+    final userArgs = ModalRoute.of(context)?.settings.arguments;
+    if (userArgs is int) {
+      idUsuario = userArgs;
+      _loadUserName();
+    }
+  }
+
+  Future<void> _cargarPostaYElegirCitas() async {
+    final posta =
+        await PostasMedicasController.obtenerPostaMedicaPorId(idPosta);
+    if (posta != null) {
+      setState(() {
+        nombrePosta = posta.nombre ?? '';
+        sede = posta.sede ?? '';
+        _citasFuture = CitasController.obtenerCitasPorIdPosta(idPosta);
+      });
+    } else {
+      setState(() {
+        nombrePosta = 'Todas las postas';
+        sede = '-';
+        _citasFuture = CitasController.obtenerCitas();
+      });
+    }
+  }
+
+  Future<void> _loadUserName() async {
+    final usuario =
+        await UsuariosController.obtenerUsuarioPacienteId(idUsuario);
+    if (usuario != null) {
+      setState(() {
+        userName = usuario.nombres;
+      });
+    }
   }
 
   void cargarEspecialidades() async {
@@ -65,15 +102,6 @@ class _ReservaCitaScreenState extends State<ReservaCitaScreen> {
     setState(() {
       especialidadesMap = {for (var e in lista) e.idEspecialidad!: e.nombre};
     });
-  }
-
-  void cargarUsuarioPaciente() async {
-    UsuariosEntity? usuario =
-        await UsuariosController.obtenerUsuarioPacienteId(idUsuario);
-    if (usuario != null) {
-      // úsalo directamente
-      userName = usuario.nombres;
-    }
   }
 
   @override

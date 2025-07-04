@@ -12,9 +12,9 @@ class MyPerfilUserScreen extends StatefulWidget {
 }
 
 class _MyPerfilUserScreenState extends State<MyPerfilUserScreen> {
-  String userName = 'Administrador'; // Valor por defecto
+  String userName = 'Paciente'; // Valor por defecto
   UsuariosEntity? usuarioPaciente;
-  late int idUsuario;
+  int? idUsuario;
 
   void initState() {
     super.initState();
@@ -24,12 +24,16 @@ class _MyPerfilUserScreenState extends State<MyPerfilUserScreen> {
     });
   }
 
-  void cargarUsuarioPaciente() async {
-    UsuariosEntity? usuario =
-        await UsuariosController.obtenerUsuarioPacienteId(idUsuario);
-    if (usuario != null) {
-      // úsalo directamente
-      userName = usuario.nombres;
+  Future<void> cargarUsuarioPaciente() async {
+    if (idUsuario == null) return;
+    try {
+      final usuario =
+          await UsuariosController.obtenerUsuarioPacienteId(idUsuario!);
+      if (usuario != null) {
+        setState(() => userName = usuario.nombres);
+      }
+    } catch (e) {
+      debugPrint('Error cargando usuario: $e');
     }
   }
 

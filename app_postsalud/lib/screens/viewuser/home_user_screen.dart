@@ -16,22 +16,35 @@ class _HomeScreenState extends State<HomeScreen> {
   String userName = 'Paciente'; // Valor por defecto
   UsuariosEntity? usuarioPaciente;
   int? idUsuario;
+  bool _argsLoaded = false;
 
   @override
-  void initState() {
-    super.initState();
-    cargarUsuarioPaciente(); // Llamar la función al iniciar
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_argsLoaded) return;
+    _argsLoaded = true;
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      idUsuario = ModalRoute.of(context)!.settings.arguments as int;
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args is int) {
+        idUsuario = args;
+        _loadUsuario(); // Ahora sí, con idUsuario inicializado
+      } else {
+        debugPrint('⚠️ No llegó idUsuario en arguments');
+      }
     });
   }
 
-  void cargarUsuarioPaciente() async {
-    UsuariosEntity? usuario =
-        await UsuariosController.obtenerUsuarioPacienteId(idUsuario!);
-    if (usuario != null) {
-      // úsalo directamente
-      userName = usuario.nombres;
+  Future<void> _loadUsuario() async {
+    if (idUsuario == null) return;
+    try {
+      final usuario =
+          await UsuariosController.obtenerUsuarioPacienteId(idUsuario!);
+      if (usuario != null) {
+        setState(() => userName = usuario.nombres);
+      }
+    } catch (e) {
+      debugPrint('Error cargando usuario: $e');
     }
   }
 
@@ -58,8 +71,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 200,
                 decoration: BoxDecoration(
                   image: const DecorationImage(
-                    image: AssetImage('assets/img/fondoLogin.png'),
-                    fit: BoxFit.contain,
+                    image: AssetImage('assets/img/medicos.png'),
+                    fit: BoxFit.fill,
                   ),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
