@@ -6,15 +6,21 @@ import 'package:app_postsalud/screens/login/register_screen.dart';
 // import 'package:email_validator/email_validator.dart';
 
 class LoginScreen extends StatefulWidget {
+
   const LoginScreen({super.key});
+
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
+
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
   final TextEditingController dniController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool _isLoading = false;
+
   String selectedButton = '';
   @override
   Widget build(BuildContext context) {
@@ -198,81 +204,119 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  MaterialButton buttonIngresar(
-    BuildContext context,
-    TextEditingController dniController,
-    TextEditingController passwordController,
-  ) {
-    return MaterialButton(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      disabledColor: Colors.amber,
-      onPressed: () async {
-        String dni = dniController.text.trim();
-        String contrasena = passwordController.text.trim();
-
-        log("DNI capturado antes de consulta: '$dni'");
-        log("Contraseña capturada antes de consulta: '$contrasena'");
-
-        if (dni.isEmpty || contrasena.isEmpty) {
-          log("Error: Alguno de los campos está vacío.");
-          _mostrarDialogoError(context, "Debes ingresar DNI y contraseña.");
-          return;
-        }
-
-        try {
-          final usuarios =
-              await UsuariosDao.getUsuariosByCredentials(dni, contrasena);
-
-          if (usuarios != null) {
-            log("Usuario encontrado: ${usuarios.nombres}");
-            int idRol = usuarios.idRol;
-
-            switch (idRol) {
-              case 1:
-                Navigator.pushReplacementNamed(
-                  context,
-                  'homeuser',
-                  arguments: usuarios.idUsuario,
-                );
-                break;
-              case 2:
-                Navigator.pushReplacementNamed(
-                  context,
-                  'homedoctor',
-                  arguments: usuarios.idUsuario,
-                );
-                break;
-              case 3:
-                Navigator.pushReplacementNamed(
-                  context,
-                  'homeadmin',
-                  arguments: usuarios.idUsuario,
-                );
-                break;
-              default:
-                log("Rol no reconocido: $idRol");
-                _mostrarDialogoError(context, "Tu rol no está registrado.");
-            }
-          } else {
-            log("Credenciales incorrectas");
-            _mostrarDialogoError(context, "DNI o contraseña incorrectos.");
-          }
-        } catch (e, stackTrace) {
-          log("🔴 Error inesperado en login: $e\n$stackTrace");
-          _mostrarDialogoError(
-              context, "Ha ocurrido un error. Intenta nuevamente.");
-        }
+  void mostrarDialogoCargando(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black.withOpacity(0.4), // fondo oscuro
+      builder: (_) {
+        return Center(
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            width: 200,
+            height: 120,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                CircularProgressIndicator(color: Colors.teal),
+                SizedBox(height: 15)
+              ],
+            ),
+          ),
+        );
       },
-      color: const Color.fromRGBO(40, 157, 137, 1),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: const Text(
-          'Ingresar',
-          style: TextStyle(color: Colors.white, fontSize: 15),
-        ),
-      ),
     );
   }
+
+  void cerrarDialogoCargando(BuildContext context) {
+    Navigator.of(context, rootNavigator: true).pop();
+  }
+
+  MaterialButton buttonIngresar(
+        BuildContext context,
+        TextEditingController dniController,
+        TextEditingController passwordController,
+        ) {
+      return MaterialButton(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        disabledColor: Colors.amber,
+          onPressed: () async {
+            String dni = dniController.text.trim();
+            String contrasena = passwordController.text.trim();
+
+            log("DNI capturado antes de consulta: '$dni'");
+            log("Contraseña capturada antes de consulta: '$contrasena'");
+
+            if (dni.isEmpty || contrasena.isEmpty) {
+              log("Error: Alguno de los campos está vacío.");
+              _mostrarDialogoError(context, "Debes ingresar DNI y contraseña.");
+              return;
+            }
+
+            mostrarDialogoCargando(context); // Mostrar cargando
+
+            try {
+              final usuarios = await UsuariosDao.getUsuariosByCredentials(
+                  dni, contrasena);
+              log("no hay conexion");
+              cerrarDialogoCargando(context); // Ocultar cargando
+
+              if (usuarios != null) {
+                log("Usuario encontrado: ${usuarios.nombres}");
+                int idRol = usuarios.idRol;
+
+                switch (idRol) {
+                  case 1:
+                    Navigator.pushReplacementNamed(
+                        context, 'homeuser', arguments: usuarios.idUsuario);
+                    break;
+                  case 2:
+                    Navigator.pushReplacementNamed(
+                        context, 'homedoctor', arguments: usuarios.idUsuario);
+                    break;
+                  case 3:
+                    Navigator.pushReplacementNamed(
+                        context, 'homeadmin', arguments: usuarios.idUsuario);
+                    break;
+                  default:
+                    log("Rol no reconocido: $idRol");
+                    _mostrarDialogoError(context, "Tu rol no está registrado.");
+                }
+              } else {
+                log("Credenciales incorrectas");
+                _mostrarDialogoError(context, "DNI o contraseña incorrectos.");
+              }
+            } catch (e, stackTrace) {
+              cerrarDialogoCargando(context); // Ocultar en caso de error
+              log("🔴 Error inesperado en login: $e\n$stackTrace");
+              _mostrarDialogoError(
+                  context, "Ha ocurrido un error. Intenta nuevamente.");
+            }
+          },
+          color: const Color.fromRGBO(40, 157, 137, 1),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: _isLoading
+              ? const SizedBox(
+            height: 20,
+            width: 20,
+            child: CircularProgressIndicator(
+              color: Colors.white,
+              strokeWidth: 2,
+            ),
+          )
+              : const Text(
+            'Ingresar',
+            style: TextStyle(color: Colors.white, fontSize: 15),
+          ),
+        ),
+      );
+    }
+
 
   void _mostrarDialogoError(BuildContext context, String mensaje) {
     showDialog(

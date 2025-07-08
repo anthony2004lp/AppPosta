@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:app_postsalud/services/database_service.dart';
 import 'package:app_postsalud/data/entity/usuarios_entity.dart';
 
@@ -22,6 +24,7 @@ class UsuariosDao {
     var conn;
     try {
       conn = await DatabaseService.connect();
+      log("no hay conexion 1");
       final result = await conn.execute(
         '''SELECT * FROM usuarios WHERE dni = :dni AND contrasena = :contrasena''',
         {'dni': dni, 'contrasena': contrasena},
