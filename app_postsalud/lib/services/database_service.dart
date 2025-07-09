@@ -4,7 +4,7 @@ class DatabaseService {
   static Future<MySQLConnection> connect() async {
     try {
       var conn = await MySQLConnection.createConnection(
-        host: "192.168.18.32",
+        host: "192.168.1.13",
         port: 3306,
         userName: "root",
         password: "123456",

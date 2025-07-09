@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:app_postsalud/util/request_address.dart';
 import 'package:flutter/material.dart';
 import 'package:app_postsalud/screens/viewadmin/widgetadmin/custom_button.dart';
 
@@ -64,9 +67,20 @@ class _OptionsHomeState extends State<OptionsHome> {
                   ),
                   PopupMenuItem(
                     child: const Text('Historial medico'),
-                    onTap: () {
+                    onTap: () async  {
                       try {
-                        // aquí podrías poner tu navegación
+                       final addressRequest = await RequestAddress.solicitarUbicacion();
+
+                       if (addressRequest != null) {
+                         final direccion = await RequestAddress.obtenerDireccionGoogle(
+                             addressRequest["latitud"]!,
+                             addressRequest["longitud"]!
+                         );
+
+                         log("component$direccion");
+                       }
+
+
                       } catch (e) {
                         _showError(e);
                       }
